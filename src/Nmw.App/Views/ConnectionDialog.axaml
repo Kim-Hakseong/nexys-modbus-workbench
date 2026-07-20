@@ -29,7 +29,9 @@
     <StackPanel Spacing="6" IsVisible="{Binding #RtuRadio.IsChecked}">
       <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
         <TextBlock Grid.Row="0" Grid.Column="0" Text="포트" VerticalAlignment="Center" />
-        <AutoCompleteBox x:Name="SerialPortBox" Grid.Row="0" Grid.Column="1" />
+        <AutoCompleteBox x:Name="SerialPortBox" Grid.Row="0" Grid.Column="1"
+                         Watermark="예: COM3 (클릭하면 사용 가능한 포트 목록 표시)"
+                         MinimumPrefixLength="0" />
         <TextBlock Grid.Row="1" Grid.Column="0" Text="보레이트" VerticalAlignment="Center" Margin="0,6,0,0" />
         <ComboBox x:Name="BaudBox" Grid.Row="1" Grid.Column="1" SelectedIndex="3" Margin="0,6,0,0">
           <ComboBoxItem>1200</ComboBoxItem>
