@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Nmw.App.Views.WriteDialog"
+        x:CompileBindings="False"
+        Title="쓰기"
+        Width="440" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+  <StackPanel Margin="16" Spacing="10">
+
+    <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto,Auto,Auto">
+      <TextBlock Grid.Row="0" Grid.Column="0" Text="Function" VerticalAlignment="Center" />
+      <ComboBox x:Name="FunctionBox" Grid.Row="0" Grid.Column="1" SelectedIndex="1"
+                SelectionChanged="OnFunctionChanged" HorizontalAlignment="Stretch">
+        <ComboBoxItem>FC05 단일 코일</ComboBoxItem>
+        <ComboBoxItem>FC06 단일 레지스터</ComboBoxItem>
+        <ComboBoxItem>FC15 다중 코일</ComboBoxItem>
+        <ComboBoxItem>FC16 다중 레지스터</ComboBoxItem>
+      </ComboBox>
+
+      <TextBlock Grid.Row="1" Grid.Column="0" Text="Unit ID" VerticalAlignment="Center" Margin="0,6,0,0" />
+      <TextBox x:Name="UnitIdBox" Grid.Row="1" Grid.Column="1" Text="1" Margin="0,6,0,0" />
+
+      <TextBlock Grid.Row="2" Grid.Column="0" Text="주소" VerticalAlignment="Center" Margin="0,6,0,0" />
+      <TextBox x:Name="AddressBox" Grid.Row="2" Grid.Column="1" Text="0" Margin="0,6,0,0" />
+
+      <TextBlock Grid.Row="3" Grid.Column="0" Text="값" VerticalAlignment="Center" Margin="0,6,0,0" />
+      <TextBox x:Name="ValueBox" Grid.Row="3" Grid.Column="1" Margin="0,6,0,0" />
+    </Grid>
+
+    <TextBlock x:Name="HintText" Foreground="Gray" TextWrapping="Wrap" />
+    <TextBlock x:Name="ResultText" TextWrapping="Wrap" />
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+      <Button Content="닫기" Click="OnCloseClick" />
+      <Button x:Name="SendButton" Content="전송" Click="OnSendClick" Classes="accent" />
+    </StackPanel>
+
+  </StackPanel>
+</Window>

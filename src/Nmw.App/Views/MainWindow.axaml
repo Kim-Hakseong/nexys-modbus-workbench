@@ -1,0 +1,123 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Nmw.App.ViewModels"
+        x:Class="Nmw.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        x:CompileBindings="False"
+        Title="Nexys Modbus Workbench"
+        Width="980" Height="700">
+  <DockPanel>
+
+    <!-- 상단 툴바 -->
+    <Border DockPanel.Dock="Top" Padding="8" BorderThickness="0,0,0,1" BorderBrush="#33888888">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button x:Name="ConnectButton" Content="연결..." Click="OnConnectClick" />
+        <Button Content="해제" Command="{Binding DisconnectCommand}" IsEnabled="{Binding IsConnected}" />
+        <Button Content="쓰기..." Click="OnWriteClick" IsEnabled="{Binding IsConnected}" />
+        <ToggleButton Content="PLC 주소(1-base)" IsChecked="{Binding OneBasedAddress}" />
+        <Separator Width="1" Background="#33888888" />
+        <Button Content="폴 추가" Command="{Binding AddPollCommand}" />
+        <Button Content="폴 삭제" Command="{Binding RemoveSelectedPollCommand}" />
+        <Separator Width="1" Background="#33888888" />
+        <Button Content="열기..." Click="OnOpenWorkspaceClick" />
+        <Button Content="저장..." Click="OnSaveWorkspaceClick" />
+        <TextBlock Text="{Binding ConnectionStatus}" VerticalAlignment="Center" Margin="12,0,0,0" />
+      </StackPanel>
+    </Border>
+
+    <!-- 하단 상태바 -->
+    <Border DockPanel.Dock="Bottom" Padding="8,4" BorderThickness="0,1,0,0" BorderBrush="#33888888">
+      <StackPanel Orientation="Horizontal" Spacing="16">
+        <TextBlock Text="{Binding ConnectionStatus}" />
+        <TextBlock Text="{Binding SelectedPoll.StatsText}" />
+        <TextBlock Text="{Binding GlobalMessage}" Foreground="OrangeRed" />
+      </StackPanel>
+    </Border>
+
+    <!-- 트래픽 로그 (접이식) -->
+    <Expander DockPanel.Dock="Bottom" Header="트래픽 로그" IsExpanded="False"
+              BorderThickness="0,1,0,0" BorderBrush="#33888888" Padding="4">
+      <DockPanel Height="200">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="4">
+          <ToggleButton Content="에러만" IsChecked="{Binding TrafficLog.ErrorsOnly}" />
+          <Button Content="클리어" Command="{Binding TrafficLog.ClearCommand}" />
+          <Button Content="저장..." Click="OnSaveLogClick" />
+          <TextBlock Text="{Binding TrafficLog.SummaryText}" VerticalAlignment="Center" />
+        </StackPanel>
+        <ListBox ItemsSource="{Binding TrafficLog.VisibleLines}"
+                 FontFamily="Menlo,Consolas,monospace" FontSize="12" />
+      </DockPanel>
+    </Expander>
+
+    <!-- 폴 탭 -->
+    <TabControl ItemsSource="{Binding Polls}" SelectedItem="{Binding SelectedPoll}" Margin="4">
+      <TabControl.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding Name}" />
+        </DataTemplate>
+      </TabControl.ItemTemplate>
+      <TabControl.ContentTemplate>
+        <DataTemplate>
+          <DockPanel>
+
+            <!-- 폴 설정 -->
+            <Border DockPanel.Dock="Top" Padding="8" BorderThickness="0,0,0,1" BorderBrush="#33888888">
+              <WrapPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
+                  <TextBlock Text="이름" VerticalAlignment="Center" />
+                  <TextBox Text="{Binding Name}" Width="110" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
+                  <TextBlock Text="Unit ID" VerticalAlignment="Center" />
+                  <TextBox Text="{Binding UnitIdText}" Width="50" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
+                  <TextBlock Text="Function" VerticalAlignment="Center" />
+                  <ComboBox ItemsSource="{Binding FunctionOptions}" SelectedIndex="{Binding FunctionIndex}" Width="170" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
+                  <TextBlock Text="시작 주소" VerticalAlignment="Center" />
+                  <TextBox Text="{Binding StartAddressText}" Width="80" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
+                  <TextBlock Text="개수" VerticalAlignment="Center" />
+                  <TextBox Text="{Binding QuantityText}" Width="60" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
+                  <TextBlock Text="주기(ms)" VerticalAlignment="Center" />
+                  <TextBox Text="{Binding ScanRateText}" Width="70" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
+                  <TextBlock Text="포맷" VerticalAlignment="Center" />
+                  <ComboBox ItemsSource="{Binding FormatOptions}" SelectedIndex="{Binding FormatIndex}" Width="110" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
+                  <TextBlock Text="워드오더" VerticalAlignment="Center" />
+                  <ComboBox ItemsSource="{Binding WordOrderOptions}" SelectedIndex="{Binding WordOrderIndex}" Width="170" />
+                </StackPanel>
+                <Button Content="폴 시작/정지" Command="{Binding TogglePollCommand}" Margin="0,0,12,4" />
+                <TextBlock Text="{Binding StatsText}" VerticalAlignment="Center" Margin="0,0,12,4" />
+                <TextBlock Text="{Binding LastError}" Foreground="OrangeRed" VerticalAlignment="Center" />
+              </WrapPanel>
+            </Border>
+
+            <!-- 폴 그리드 -->
+            <DataGrid ItemsSource="{Binding Rows}"
+                      AutoGenerateColumns="False"
+                      CanUserReorderColumns="False"
+                      DoubleTapped="OnGridDoubleTapped"
+                      Margin="4">
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="140" IsReadOnly="True" />
+                <DataGridTextColumn Header="별칭" Binding="{Binding Alias}" Width="180" IsReadOnly="False" />
+                <DataGridTextColumn Header="값" Binding="{Binding Value}" Width="*" IsReadOnly="True" />
+              </DataGrid.Columns>
+            </DataGrid>
+
+          </DockPanel>
+        </DataTemplate>
+      </TabControl.ContentTemplate>
+    </TabControl>
+
+  </DockPanel>
+</Window>
