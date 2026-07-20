@@ -1,8 +1,228 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Nmw.App.App">
+             x:Class="Nmw.App.App"
+             RequestedThemeVariant="Light">
+
+  <Application.Resources>
+    <!-- Crextio 레퍼런스 팔레트: 웜 그레이 → 소프트 옐로 그라데이션, 차콜 잉크, 옐로 악센트 -->
+    <Color x:Key="SystemAccentColor">#F2C744</Color>
+    <Color x:Key="SystemAccentColorDark1">#E2B838</Color>
+    <Color x:Key="SystemAccentColorDark2">#CBA32C</Color>
+    <Color x:Key="SystemAccentColorDark3">#AC8921</Color>
+    <Color x:Key="SystemAccentColorLight1">#F5D164</Color>
+    <Color x:Key="SystemAccentColorLight2">#F8DD86</Color>
+    <Color x:Key="SystemAccentColorLight3">#FBE8A8</Color>
+
+    <LinearGradientBrush x:Key="AppBackgroundBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+      <GradientStop Color="#EDECE8" Offset="0" />
+      <GradientStop Color="#F2EDD6" Offset="0.45" />
+      <GradientStop Color="#F6E6A6" Offset="1" />
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="CardBrush" Color="#FDFCF9" />
+    <SolidColorBrush x:Key="CardSoftBrush" Color="#F7F3E6" />
+    <SolidColorBrush x:Key="InkBrush" Color="#22211D" />
+    <SolidColorBrush x:Key="InkHoverBrush" Color="#3A3830" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#26251F" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#8E8B7E" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#F2C744" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#F8ECC2" />
+    <SolidColorBrush x:Key="LineBrush" Color="#E6E2D3" />
+    <SolidColorBrush x:Key="ErrorBrush" Color="#D96C47" />
+
+    <!-- Fluent 리소스 오버라이드 (탭 선택 필, 체크 토글) -->
+    <SolidColorBrush x:Key="TabItemHeaderSelectedPipeFill" Color="Transparent" />
+    <SolidColorBrush x:Key="TabItemHeaderForegroundSelected" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="TabItemHeaderForegroundSelectedPointerOver" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="TabItemHeaderForegroundSelectedPressed" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ToggleButtonBackgroundChecked" Color="#F2C744" />
+    <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver" Color="#E9BC38" />
+    <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPressed" Color="#DFB230" />
+    <SolidColorBrush x:Key="ToggleButtonForegroundChecked" Color="#22211D" />
+    <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPointerOver" Color="#22211D" />
+    <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPressed" Color="#22211D" />
+  </Application.Resources>
+
   <Application.Styles>
     <FluentTheme />
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+
+    <!-- 공통: 그라데이션 배경 + Inter 폰트 -->
+    <Style Selector="Window">
+      <Setter Property="Background" Value="{StaticResource AppBackgroundBrush}" />
+      <Setter Property="FontFamily" Value="fonts:Inter#Inter" />
+      <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+
+    <!-- 라운드 카드 -->
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="{StaticResource CardBrush}" />
+      <Setter Property="CornerRadius" Value="18" />
+      <Setter Property="BoxShadow" Value="0 6 22 0 #14000000" />
+    </Style>
+    <Style Selector="Border.softCard">
+      <Setter Property="Background" Value="{StaticResource CardSoftBrush}" />
+      <Setter Property="CornerRadius" Value="14" />
+    </Style>
+    <Style Selector="Border.pill">
+      <Setter Property="CornerRadius" Value="17" />
+      <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+      <Setter Property="BorderThickness" Value="1.2" />
+      <Setter Property="Padding" Value="14,7" />
+    </Style>
+    <Style Selector="Border.inkChip">
+      <Setter Property="Background" Value="{StaticResource InkBrush}" />
+      <Setter Property="CornerRadius" Value="14" />
+      <Setter Property="Padding" Value="12,5" />
+    </Style>
+
+    <!-- 필드 라벨 (입력칸 위 작은 회색 라벨) -->
+    <Style Selector="TextBlock.fieldLabel">
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+      <Setter Property="Margin" Value="4,0,0,4" />
+    </Style>
+    <Style Selector="TextBlock.sectionTitle">
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.muted">
+      <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="TextBlock.error">
+      <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <!-- 필 버튼 -->
+    <Style Selector="Button">
+      <Setter Property="Background" Value="{StaticResource CardBrush}" />
+      <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="16" />
+      <Setter Property="Padding" Value="14,7" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource AccentSoftBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+      <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+    <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+      <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    </Style>
+
+    <!-- 다크(잉크) 강조 버튼 (Fluent 내장 accent 스타일보다 우선하도록 프레젠터까지 지정) -->
+    <Style Selector="Button.accent">
+      <Setter Property="Background" Value="{StaticResource InkBrush}" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="FontWeight" Value="Medium" />
+    </Style>
+    <Style Selector="Button.accent /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource InkBrush}" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="Button.accent:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource InkHoverBrush}" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
+    </Style>
+    <Style Selector="Button.accent:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+      <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    </Style>
+
+    <!-- 토글 버튼: 체크 시 옐로 칩 -->
+    <Style Selector="ToggleButton">
+      <Setter Property="Background" Value="{StaticResource CardBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="16" />
+      <Setter Property="Padding" Value="14,7" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- 입력 컨트롤 -->
+    <Style Selector="TextBox">
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Background" Value="#FFFFFF" />
+      <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Padding" Value="10,6" />
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Background" Value="#FFFFFF" />
+      <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Padding" Value="10,5" />
+    </Style>
+    <Style Selector="AutoCompleteBox">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="MinHeight" Value="32" />
+    </Style>
+
+    <!-- 탭: 선택 시 다크 필 -->
+    <Style Selector="TabControl">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Padding" Value="0,10,0,0" />
+    </Style>
+    <Style Selector="TabItem">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="FontWeight" Value="Medium" />
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="Padding" Value="16,6" />
+      <Setter Property="Margin" Value="0,0,6,0" />
+      <Setter Property="CornerRadius" Value="17" />
+      <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="TabItem:selected">
+      <Setter Property="Background" Value="{StaticResource InkBrush}" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
+    </Style>
+    <Style Selector="TabItem:selected /template/ Border#PART_LayoutRoot">
+      <Setter Property="Background" Value="{StaticResource InkBrush}" />
+      <Setter Property="CornerRadius" Value="17" />
+    </Style>
+    <Style Selector="TabItem:pointerover /template/ Border#PART_LayoutRoot">
+      <Setter Property="Background" Value="{StaticResource AccentSoftBrush}" />
+      <Setter Property="CornerRadius" Value="17" />
+    </Style>
+
+    <!-- 데이터 그리드 -->
+    <Style Selector="DataGrid">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="RowBackground" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="GridLinesVisibility" Value="Horizontal" />
+      <Setter Property="HorizontalGridLinesBrush" Value="#1A26251F" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+    <Style Selector="DataGridColumnHeader">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <!-- 리스트/익스팬더 -->
+    <Style Selector="ListBox">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="CornerRadius" Value="12" />
+    </Style>
+    <Style Selector="Expander">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style Selector="RadioButton">
+      <Setter Property="FontSize" Value="13" />
+    </Style>
   </Application.Styles>
 </Application>

@@ -3,93 +3,119 @@
         x:Class="Nmw.App.Views.SimulatorWindow"
         x:CompileBindings="False"
         Title="내장 슬레이브 시뮬레이터"
-        Width="520" Height="620"
+        Width="600" Height="680"
         WindowStartupLocation="CenterOwner">
-  <DockPanel Margin="12">
+  <DockPanel Margin="14">
 
-    <!-- 설정/상태 -->
-    <StackPanel DockPanel.Dock="Top" Spacing="8">
-      <TextBlock TextWrapping="Wrap" Foreground="Gray"
-                 Text="물리 장비 없이 테스트할 수 있는 내장 슬레이브입니다. 모든 Unit ID에 응답합니다." />
-      <StackPanel Orientation="Horizontal" Spacing="8">
-        <TextBlock Text="모드" VerticalAlignment="Center" />
-        <ComboBox ItemsSource="{Binding ModeOptions}" SelectedIndex="{Binding ModeIndex}"
-                  Width="220" IsEnabled="{Binding !IsRunning}" />
-        <TextBlock Text="표시 개수" VerticalAlignment="Center" />
-        <TextBox Text="{Binding DisplayCountText}" Width="60" Watermark="예: 20" IsEnabled="{Binding !IsRunning}" />
-        <Button Content="시작/정지" Command="{Binding ToggleCommand}" Classes="accent" />
-        <ToggleButton Content="값 자동 변화" IsChecked="{Binding AutoChange}" />
-      </StackPanel>
-
-      <!-- TCP 모드 -->
-      <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsTcpMode}">
-        <TextBlock Text="포트" VerticalAlignment="Center" />
-        <TextBox Text="{Binding PortText}" Width="70" Watermark="예: 1502" IsEnabled="{Binding !IsRunning}" />
-        <TextBlock Foreground="Gray" VerticalAlignment="Center"
-                   Text="시작 후 [연결...]에서 Modbus TCP, 호스트 127.0.0.1, 이 포트로 연결" />
-      </StackPanel>
-
-      <!-- RTU 시리얼 모드 -->
-      <StackPanel Spacing="6" IsVisible="{Binding IsRtuMode}">
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="포트" VerticalAlignment="Center" />
-          <AutoCompleteBox Text="{Binding SerialPortText}" ItemsSource="{Binding SerialPortNames}"
-                           Width="140" Watermark="예: COM4" MinimumPrefixLength="0"
-                           IsEnabled="{Binding !IsRunning}" />
-          <TextBlock Text="보레이트" VerticalAlignment="Center" />
-          <ComboBox ItemsSource="{Binding BaudOptions}" SelectedIndex="{Binding BaudIndex}"
-                    Width="90" IsEnabled="{Binding !IsRunning}" />
-          <TextBlock Text="패리티" VerticalAlignment="Center" />
-          <ComboBox ItemsSource="{Binding ParityOptions}" SelectedIndex="{Binding ParityIndex}"
-                    Width="80" IsEnabled="{Binding !IsRunning}" />
-          <TextBlock Text="정지" VerticalAlignment="Center" />
-          <ComboBox ItemsSource="{Binding StopBitsOptions}" SelectedIndex="{Binding StopBitsIndex}"
-                    Width="55" IsEnabled="{Binding !IsRunning}" />
+    <!-- 설정/상태 카드 -->
+    <Border DockPanel.Dock="Top" Classes="card" Padding="16" Margin="0,0,0,12">
+      <StackPanel Spacing="10">
+        <TextBlock Classes="sectionTitle" Text="내장 슬레이브 시뮬레이터" />
+        <TextBlock TextWrapping="Wrap" Classes="muted"
+                   Text="물리 장비 없이 테스트할 수 있는 내장 슬레이브입니다. 모든 Unit ID에 응답합니다." />
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <StackPanel>
+            <TextBlock Classes="fieldLabel" Text="모드" />
+            <ComboBox ItemsSource="{Binding ModeOptions}" SelectedIndex="{Binding ModeIndex}"
+                      Width="220" IsEnabled="{Binding !IsRunning}" />
+          </StackPanel>
+          <StackPanel>
+            <TextBlock Classes="fieldLabel" Text="표시 개수" />
+            <TextBox Text="{Binding DisplayCountText}" Width="70" Watermark="예: 20" IsEnabled="{Binding !IsRunning}" />
+          </StackPanel>
+          <StackPanel VerticalAlignment="Bottom">
+            <Button Content="시작/정지" Command="{Binding ToggleCommand}" Classes="accent" />
+          </StackPanel>
+          <StackPanel VerticalAlignment="Bottom">
+            <ToggleButton Content="값 자동 변화" IsChecked="{Binding AutoChange}" />
+          </StackPanel>
         </StackPanel>
-        <TextBlock TextWrapping="Wrap" Foreground="Gray"
-                   Text="같은 PC에서 테스트하려면 가상 COM 포트 쌍(예: com0com으로 COM3↔COM4 생성)이 필요합니다. 슬레이브를 COM4에 시작하고 [연결...]에서 RTU COM3으로 연결하세요. 또는 서로 배선한 USB-RS485 컨버터 2개를 사용합니다. 통신 설정(보레이트 등)은 마스터와 동일해야 합니다." />
-      </StackPanel>
-      <StackPanel Orientation="Horizontal" Spacing="12">
-        <TextBlock Text="{Binding StatusText}" />
-        <TextBlock Text="{Binding Message}" Foreground="OrangeRed" />
-      </StackPanel>
-    </StackPanel>
 
-    <!-- 데이터 영역 -->
-    <TabControl Margin="0,8,0,0">
-      <TabItem Header="홀딩 레지스터">
-        <DataGrid ItemsSource="{Binding HoldingRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
-            <DataGridTextColumn Header="값 (10진/0x)" Binding="{Binding ValueText}" Width="*" IsReadOnly="False" />
-          </DataGrid.Columns>
-        </DataGrid>
-      </TabItem>
-      <TabItem Header="입력 레지스터">
-        <DataGrid ItemsSource="{Binding InputRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
-            <DataGridTextColumn Header="값 (10진/0x)" Binding="{Binding ValueText}" Width="*" IsReadOnly="False" />
-          </DataGrid.Columns>
-        </DataGrid>
-      </TabItem>
-      <TabItem Header="코일">
-        <DataGrid ItemsSource="{Binding CoilRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
-            <DataGridCheckBoxColumn Header="ON" Binding="{Binding Value}" Width="*" IsReadOnly="False" />
-          </DataGrid.Columns>
-        </DataGrid>
-      </TabItem>
-      <TabItem Header="접점">
-        <DataGrid ItemsSource="{Binding DiscreteRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
-            <DataGridCheckBoxColumn Header="ON" Binding="{Binding Value}" Width="*" IsReadOnly="False" />
-          </DataGrid.Columns>
-        </DataGrid>
-      </TabItem>
-    </TabControl>
+        <!-- TCP 모드 -->
+        <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding IsTcpMode}">
+          <StackPanel>
+            <TextBlock Classes="fieldLabel" Text="포트" />
+            <TextBox Text="{Binding PortText}" Width="80" Watermark="예: 1502" IsEnabled="{Binding !IsRunning}" />
+          </StackPanel>
+          <TextBlock Classes="muted" VerticalAlignment="Bottom" Margin="0,0,0,6" TextWrapping="Wrap"
+                     Text="시작 후 [연결...]에서 Modbus TCP, 호스트 127.0.0.1, 이 포트로 연결" />
+        </StackPanel>
+
+        <!-- RTU 시리얼 모드 -->
+        <StackPanel Spacing="8" IsVisible="{Binding IsRtuMode}">
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel>
+              <TextBlock Classes="fieldLabel" Text="포트" />
+              <AutoCompleteBox Text="{Binding SerialPortText}" ItemsSource="{Binding SerialPortNames}"
+                               Width="140" Watermark="예: COM4" MinimumPrefixLength="0"
+                               IsEnabled="{Binding !IsRunning}" />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="fieldLabel" Text="보레이트" />
+              <ComboBox ItemsSource="{Binding BaudOptions}" SelectedIndex="{Binding BaudIndex}"
+                        Width="95" IsEnabled="{Binding !IsRunning}" />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="fieldLabel" Text="패리티" />
+              <ComboBox ItemsSource="{Binding ParityOptions}" SelectedIndex="{Binding ParityIndex}"
+                        Width="85" IsEnabled="{Binding !IsRunning}" />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="fieldLabel" Text="정지" />
+              <ComboBox ItemsSource="{Binding StopBitsOptions}" SelectedIndex="{Binding StopBitsIndex}"
+                        Width="60" IsEnabled="{Binding !IsRunning}" />
+            </StackPanel>
+          </StackPanel>
+          <TextBlock TextWrapping="Wrap" Classes="muted"
+                     Text="같은 PC에서 테스트하려면 가상 COM 포트 쌍(예: com0com으로 COM3↔COM4 생성)이 필요합니다. 슬레이브를 COM4에 시작하고 [연결...]에서 RTU COM3으로 연결하세요. 또는 서로 배선한 USB-RS485 컨버터 2개를 사용합니다. 통신 설정(보레이트 등)은 마스터와 동일해야 합니다." />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <Border Classes="inkChip">
+            <TextBlock Text="{Binding StatusText}" Foreground="#FFFFFF" FontSize="12" />
+          </Border>
+          <TextBlock Text="{Binding Message}" Classes="error" VerticalAlignment="Center" />
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
+    <!-- 데이터 영역 카드 -->
+    <Border Classes="card" Padding="14">
+      <TabControl>
+        <TabItem Header="홀딩 레지스터">
+          <DataGrid ItemsSource="{Binding HoldingRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
+              <DataGridTextColumn Header="값 (10진/0x)" Binding="{Binding ValueText}" Width="*" IsReadOnly="False" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </TabItem>
+        <TabItem Header="입력 레지스터">
+          <DataGrid ItemsSource="{Binding InputRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
+              <DataGridTextColumn Header="값 (10진/0x)" Binding="{Binding ValueText}" Width="*" IsReadOnly="False" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </TabItem>
+        <TabItem Header="코일">
+          <DataGrid ItemsSource="{Binding CoilRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
+              <DataGridCheckBoxColumn Header="ON" Binding="{Binding Value}" Width="*" IsReadOnly="False" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </TabItem>
+        <TabItem Header="접점">
+          <DataGrid ItemsSource="{Binding DiscreteRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
+              <DataGridCheckBoxColumn Header="ON" Binding="{Binding Value}" Width="*" IsReadOnly="False" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </TabItem>
+      </TabControl>
+    </Border>
 
   </DockPanel>
 </Window>

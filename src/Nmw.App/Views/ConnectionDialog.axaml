@@ -3,81 +3,84 @@
         x:Class="Nmw.App.Views.ConnectionDialog"
         x:CompileBindings="False"
         Title="채널 연결"
-        Width="420" SizeToContent="Height"
+        Width="460" SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         CanResize="False">
-  <StackPanel Margin="16" Spacing="10">
+  <Border Classes="card" Margin="14" Padding="18">
+    <StackPanel Spacing="10">
 
-    <TextBlock Text="연결 모드" FontWeight="Bold" />
-    <StackPanel Orientation="Horizontal" Spacing="16">
-      <RadioButton x:Name="TcpRadio" GroupName="Mode" Content="Modbus TCP" IsChecked="True" />
-      <RadioButton x:Name="RtuRadio" GroupName="Mode" Content="RTU (시리얼)" />
-      <RadioButton x:Name="RtuOverTcpRadio" GroupName="Mode" Content="RTU over TCP" />
-    </StackPanel>
+      <TextBlock Classes="sectionTitle" Text="채널 연결" />
+      <TextBlock Text="연결 모드" Classes="fieldLabel" />
+      <StackPanel Orientation="Horizontal" Spacing="16">
+        <RadioButton x:Name="TcpRadio" GroupName="Mode" Content="Modbus TCP" IsChecked="True" />
+        <RadioButton x:Name="RtuRadio" GroupName="Mode" Content="RTU (시리얼)" />
+        <RadioButton x:Name="RtuOverTcpRadio" GroupName="Mode" Content="RTU over TCP" />
+      </StackPanel>
 
-    <!-- TCP / RTU over TCP 파라미터 -->
-    <StackPanel Spacing="6" IsVisible="{Binding !#RtuRadio.IsChecked}">
-      <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto" >
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="호스트" VerticalAlignment="Center" />
-        <TextBox x:Name="HostBox" Grid.Row="0" Grid.Column="1" Text="192.168.0.10" Watermark="예: 192.168.0.10 (내장 시뮬레이터: 127.0.0.1)" />
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="포트" VerticalAlignment="Center" Margin="0,6,0,0" />
-        <TextBox x:Name="PortBox" Grid.Row="1" Grid.Column="1" Text="502" Watermark="예: 502 (내장 시뮬레이터: 1502)" Margin="0,6,0,0" />
+      <!-- TCP / RTU over TCP 파라미터 -->
+      <StackPanel Spacing="6" IsVisible="{Binding !#RtuRadio.IsChecked}">
+        <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto">
+          <TextBlock Grid.Row="0" Grid.Column="0" Text="호스트" VerticalAlignment="Center" />
+          <TextBox x:Name="HostBox" Grid.Row="0" Grid.Column="1" Text="192.168.0.10" Watermark="예: 192.168.0.10 (내장 시뮬레이터: 127.0.0.1)" />
+          <TextBlock Grid.Row="1" Grid.Column="0" Text="포트" VerticalAlignment="Center" Margin="0,6,0,0" />
+          <TextBox x:Name="PortBox" Grid.Row="1" Grid.Column="1" Text="502" Watermark="예: 502 (내장 시뮬레이터: 1502)" Margin="0,6,0,0" />
+        </Grid>
+      </StackPanel>
+
+      <!-- 시리얼 파라미터 -->
+      <StackPanel Spacing="6" IsVisible="{Binding #RtuRadio.IsChecked}">
+        <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+          <TextBlock Grid.Row="0" Grid.Column="0" Text="포트" VerticalAlignment="Center" />
+          <AutoCompleteBox x:Name="SerialPortBox" Grid.Row="0" Grid.Column="1"
+                           Watermark="예: COM3 (클릭하면 사용 가능한 포트 목록 표시)"
+                           MinimumPrefixLength="0" />
+          <TextBlock Grid.Row="1" Grid.Column="0" Text="보레이트" VerticalAlignment="Center" Margin="0,6,0,0" />
+          <ComboBox x:Name="BaudBox" Grid.Row="1" Grid.Column="1" SelectedIndex="3" Margin="0,6,0,0">
+            <ComboBoxItem>1200</ComboBoxItem>
+            <ComboBoxItem>2400</ComboBoxItem>
+            <ComboBoxItem>4800</ComboBoxItem>
+            <ComboBoxItem>9600</ComboBoxItem>
+            <ComboBoxItem>19200</ComboBoxItem>
+            <ComboBoxItem>38400</ComboBoxItem>
+            <ComboBoxItem>57600</ComboBoxItem>
+            <ComboBoxItem>115200</ComboBoxItem>
+          </ComboBox>
+          <TextBlock Grid.Row="2" Grid.Column="0" Text="패리티" VerticalAlignment="Center" Margin="0,6,0,0" />
+          <ComboBox x:Name="ParityBox" Grid.Row="2" Grid.Column="1" SelectedIndex="0" Margin="0,6,0,0">
+            <ComboBoxItem>None</ComboBoxItem>
+            <ComboBoxItem>Even</ComboBoxItem>
+            <ComboBoxItem>Odd</ComboBoxItem>
+          </ComboBox>
+          <TextBlock Grid.Row="3" Grid.Column="0" Text="데이터 비트" VerticalAlignment="Center" Margin="0,6,0,0" />
+          <ComboBox x:Name="DataBitsBox" Grid.Row="3" Grid.Column="1" SelectedIndex="1" Margin="0,6,0,0">
+            <ComboBoxItem>7</ComboBoxItem>
+            <ComboBoxItem>8</ComboBoxItem>
+          </ComboBox>
+          <TextBlock Grid.Row="4" Grid.Column="0" Text="정지 비트" VerticalAlignment="Center" Margin="0,6,0,0" />
+          <ComboBox x:Name="StopBitsBox" Grid.Row="4" Grid.Column="1" SelectedIndex="0" Margin="0,6,0,0">
+            <ComboBoxItem>1</ComboBoxItem>
+            <ComboBoxItem>2</ComboBoxItem>
+          </ComboBox>
+        </Grid>
+      </StackPanel>
+
+      <TextBlock Text="공통" Classes="fieldLabel" Margin="0,6,0,0" />
+      <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="타임아웃(ms)" VerticalAlignment="Center" />
+        <TextBox x:Name="TimeoutBox" Grid.Row="0" Grid.Column="1" Text="1000" Watermark="예: 1000" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="재시도 횟수" VerticalAlignment="Center" Margin="0,6,0,0" />
+        <TextBox x:Name="RetriesBox" Grid.Row="1" Grid.Column="1" Text="1" Watermark="예: 1" Margin="0,6,0,0" />
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="프레임간 지연(ms)" VerticalAlignment="Center" Margin="0,6,0,0" />
+        <TextBox x:Name="InterFrameBox" Grid.Row="2" Grid.Column="1" Text="" Watermark="예: 20 (빈칸 = 보레이트로 자동 계산)" Margin="0,6,0,0" />
       </Grid>
+
+      <TextBlock x:Name="ErrorText" Classes="error" IsVisible="False" />
+
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,8,0,0">
+        <Button Content="취소" Click="OnCancelClick" />
+        <Button Content="연결" Click="OnOkClick" Classes="accent" />
+      </StackPanel>
+
     </StackPanel>
-
-    <!-- 시리얼 파라미터 -->
-    <StackPanel Spacing="6" IsVisible="{Binding #RtuRadio.IsChecked}">
-      <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="포트" VerticalAlignment="Center" />
-        <AutoCompleteBox x:Name="SerialPortBox" Grid.Row="0" Grid.Column="1"
-                         Watermark="예: COM3 (클릭하면 사용 가능한 포트 목록 표시)"
-                         MinimumPrefixLength="0" />
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="보레이트" VerticalAlignment="Center" Margin="0,6,0,0" />
-        <ComboBox x:Name="BaudBox" Grid.Row="1" Grid.Column="1" SelectedIndex="3" Margin="0,6,0,0">
-          <ComboBoxItem>1200</ComboBoxItem>
-          <ComboBoxItem>2400</ComboBoxItem>
-          <ComboBoxItem>4800</ComboBoxItem>
-          <ComboBoxItem>9600</ComboBoxItem>
-          <ComboBoxItem>19200</ComboBoxItem>
-          <ComboBoxItem>38400</ComboBoxItem>
-          <ComboBoxItem>57600</ComboBoxItem>
-          <ComboBoxItem>115200</ComboBoxItem>
-        </ComboBox>
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="패리티" VerticalAlignment="Center" Margin="0,6,0,0" />
-        <ComboBox x:Name="ParityBox" Grid.Row="2" Grid.Column="1" SelectedIndex="0" Margin="0,6,0,0">
-          <ComboBoxItem>None</ComboBoxItem>
-          <ComboBoxItem>Even</ComboBoxItem>
-          <ComboBoxItem>Odd</ComboBoxItem>
-        </ComboBox>
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="데이터 비트" VerticalAlignment="Center" Margin="0,6,0,0" />
-        <ComboBox x:Name="DataBitsBox" Grid.Row="3" Grid.Column="1" SelectedIndex="1" Margin="0,6,0,0">
-          <ComboBoxItem>7</ComboBoxItem>
-          <ComboBoxItem>8</ComboBoxItem>
-        </ComboBox>
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="정지 비트" VerticalAlignment="Center" Margin="0,6,0,0" />
-        <ComboBox x:Name="StopBitsBox" Grid.Row="4" Grid.Column="1" SelectedIndex="0" Margin="0,6,0,0">
-          <ComboBoxItem>1</ComboBoxItem>
-          <ComboBoxItem>2</ComboBoxItem>
-        </ComboBox>
-      </Grid>
-    </StackPanel>
-
-    <TextBlock Text="공통" FontWeight="Bold" Margin="0,6,0,0" />
-    <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto">
-      <TextBlock Grid.Row="0" Grid.Column="0" Text="타임아웃(ms)" VerticalAlignment="Center" />
-      <TextBox x:Name="TimeoutBox" Grid.Row="0" Grid.Column="1" Text="1000" Watermark="예: 1000" />
-      <TextBlock Grid.Row="1" Grid.Column="0" Text="재시도 횟수" VerticalAlignment="Center" Margin="0,6,0,0" />
-      <TextBox x:Name="RetriesBox" Grid.Row="1" Grid.Column="1" Text="1" Watermark="예: 1" Margin="0,6,0,0" />
-      <TextBlock Grid.Row="2" Grid.Column="0" Text="프레임간 지연(ms, 빈칸=자동)" VerticalAlignment="Center" Margin="0,6,0,0" />
-      <TextBox x:Name="InterFrameBox" Grid.Row="2" Grid.Column="1" Text="" Watermark="예: 20 (빈칸 = 보레이트로 자동 계산)" Margin="0,6,0,0" />
-    </Grid>
-
-    <TextBlock x:Name="ErrorText" Foreground="OrangeRed" IsVisible="False" />
-
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,8,0,0">
-      <Button Content="취소" Click="OnCancelClick" />
-      <Button Content="연결" Click="OnOkClick" Classes="accent" />
-    </StackPanel>
-
-  </StackPanel>
+  </Border>
 </Window>

@@ -198,3 +198,16 @@
 - [결정] CRC 불일치/미지원 FC 요청은 실제 RTU 슬레이브 동작대로 무응답 폐기 후 재동기화(Reset). 시뮬레이터 데이터 저장소는 TCP/RTU가 공유하며 시뮬레이터 재시작에도 값이 유지된다.
 - [미정] (사람 확인) Windows에서 com0com 가상 포트 쌍 대상 실기 스모크 — 체크리스트 7장에 추가됨.
 - 다음 세션 참고: 남은 개선 후보는 자동 재접속(F-01), CSV 내보내기 등 P2 항목.
+
+## S3 — UI 전면 개편 (Crextio 레퍼런스 스타일) · 2026-07-21 08:28
+- 상태: ✅ 완료
+- 생성/수정 파일:
+  - src/Nmw.App/App.axaml (전면 재작성 — 팔레트/그라데이션/전역 스타일: 웜 그레이→소프트 옐로 대각 그라데이션 배경, 흰색 라운드 카드(BoxShadow), 필 버튼, 차콜 잉크 accent 버튼, 옐로 체크 토글, 다크 필 탭, 라벨-위 필드 스타일, Inter 폰트 전역 적용, SystemAccentColor=옐로)
+  - src/Nmw.App/Views/MainWindow.axaml (상단 바 카드+로고 필, 폴 탭 카드, 설정영역 소프트 카드+필드 라벨 상단 배치, 통계 잉크 칩, 트래픽 로그 카드)
+  - src/Nmw.App/Views/ConnectionDialog.axaml, WriteDialog.axaml, SimulatorWindow.axaml, HelpWindow.axaml (카드 래핑 + 스타일 클래스 적용, 컨트롤/핸들러/바인딩 무변경)
+  - tests/Nmw.App.Tests/TestAppBuilder.cs (Inter 글리프 생성을 위해 헤드리스 드로잉 → Skia 렌더러 전환)
+- 테스트: 234/234 passed (dotnet build 경고 0, 에러 0). 기능 코드(ViewModel/Core) 무변경 — 기존 스모크 전체 통과로 기능 보존 확인.
+- 검증: 헤드리스 Skia 렌더 캡처로 메인/연결/쓰기/시뮬레이터/도움말 5개 창 PNG 확인 — 그라데이션 배경, 카드, 필 버튼, 다크 필 탭이 레퍼런스와 일치. 실제 앱 실행 크래시 없음(APP_ALIVE).
+- [결정] 다크/라이트 자동 전환(기존 Fluent 기본)을 제거하고 RequestedThemeVariant=Light 고정 — 레퍼런스 팔레트가 라이트 전용이라 다크 모드에서 색 대비가 깨지기 때문. 필요 시 다크 팔레트는 후속 작업.
+- [결정] Fluent 내장 Button.accent 스타일(SystemAccentColor)이 커스텀 잉크 버튼을 덮는 문제 발견(스냅샷 검증에서 확인) → 템플릿 프레젠터 레벨 스타일로 오버라이드.
+- 다음 세션 참고: 남은 개선 후보 동일 (자동 재접속, CSV 내보내기 등).
