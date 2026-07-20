@@ -19,6 +19,14 @@ public sealed partial class WriteDialog : Window
         "값 목록: 10, 0x0102 (콤마/공백 구분)",
     ];
 
+    private static readonly string[] ValueWatermarks =
+    [
+        "예: 1 (ON) / 0 (OFF)",
+        "예: 123 또는 0xBEEF",
+        "예: 1,0,1,1",
+        "예: 10, 0x0102, 3",
+    ];
+
     private readonly ModbusMaster? _master;
     private readonly AddressBase _addressBase;
 
@@ -58,10 +66,14 @@ public sealed partial class WriteDialog : Window
     private void UpdateHint()
     {
         // InitializeComponent 이전 이벤트 호출 대비
-        if (HintText is not null)
+        if (HintText is null)
         {
-            HintText.Text = Hints[Math.Clamp(FunctionBox.SelectedIndex, 0, Hints.Length - 1)];
+            return;
         }
+
+        var index = Math.Clamp(FunctionBox.SelectedIndex, 0, Hints.Length - 1);
+        HintText.Text = Hints[index];
+        ValueBox.Watermark = ValueWatermarks[index];
     }
 
     private void OnCloseClick(object? sender, RoutedEventArgs e) => Close();

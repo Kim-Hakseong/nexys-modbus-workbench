@@ -67,11 +67,11 @@
               <WrapPanel>
                 <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
                   <TextBlock Text="이름" VerticalAlignment="Center" />
-                  <TextBox Text="{Binding Name}" Width="110" />
+                  <TextBox Text="{Binding Name}" Width="110" Watermark="예: 보일러 온도" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
                   <TextBlock Text="Unit ID" VerticalAlignment="Center" />
-                  <TextBox Text="{Binding UnitIdText}" Width="50" />
+                  <TextBox Text="{Binding UnitIdText}" Width="50" Watermark="예: 1" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
                   <TextBlock Text="Function" VerticalAlignment="Center" />
@@ -79,15 +79,15 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
                   <TextBlock Text="시작 주소" VerticalAlignment="Center" />
-                  <TextBox Text="{Binding StartAddressText}" Width="80" />
+                  <TextBox Text="{Binding StartAddressText}" Width="80" Watermark="예: 0 / 40001" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
                   <TextBlock Text="개수" VerticalAlignment="Center" />
-                  <TextBox Text="{Binding QuantityText}" Width="60" />
+                  <TextBox Text="{Binding QuantityText}" Width="60" Watermark="예: 10" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
                   <TextBlock Text="주기(ms)" VerticalAlignment="Center" />
-                  <TextBox Text="{Binding ScanRateText}" Width="70" />
+                  <TextBox Text="{Binding ScanRateText}" Width="70" Watermark="예: 500" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,0,12,4">
                   <TextBlock Text="포맷" VerticalAlignment="Center" />

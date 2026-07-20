@@ -19,9 +19,9 @@
     <StackPanel Spacing="6" IsVisible="{Binding !#RtuRadio.IsChecked}">
       <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto" >
         <TextBlock Grid.Row="0" Grid.Column="0" Text="호스트" VerticalAlignment="Center" />
-        <TextBox x:Name="HostBox" Grid.Row="0" Grid.Column="1" Text="192.168.0.10" />
+        <TextBox x:Name="HostBox" Grid.Row="0" Grid.Column="1" Text="192.168.0.10" Watermark="예: 192.168.0.10 (내장 시뮬레이터: 127.0.0.1)" />
         <TextBlock Grid.Row="1" Grid.Column="0" Text="포트" VerticalAlignment="Center" Margin="0,6,0,0" />
-        <TextBox x:Name="PortBox" Grid.Row="1" Grid.Column="1" Text="502" Margin="0,6,0,0" />
+        <TextBox x:Name="PortBox" Grid.Row="1" Grid.Column="1" Text="502" Watermark="예: 502 (내장 시뮬레이터: 1502)" Margin="0,6,0,0" />
       </Grid>
     </StackPanel>
 
@@ -65,11 +65,11 @@
     <TextBlock Text="공통" FontWeight="Bold" Margin="0,6,0,0" />
     <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto">
       <TextBlock Grid.Row="0" Grid.Column="0" Text="타임아웃(ms)" VerticalAlignment="Center" />
-      <TextBox x:Name="TimeoutBox" Grid.Row="0" Grid.Column="1" Text="1000" />
+      <TextBox x:Name="TimeoutBox" Grid.Row="0" Grid.Column="1" Text="1000" Watermark="예: 1000" />
       <TextBlock Grid.Row="1" Grid.Column="0" Text="재시도 횟수" VerticalAlignment="Center" Margin="0,6,0,0" />
-      <TextBox x:Name="RetriesBox" Grid.Row="1" Grid.Column="1" Text="1" Margin="0,6,0,0" />
+      <TextBox x:Name="RetriesBox" Grid.Row="1" Grid.Column="1" Text="1" Watermark="예: 1" Margin="0,6,0,0" />
       <TextBlock Grid.Row="2" Grid.Column="0" Text="프레임간 지연(ms, 빈칸=자동)" VerticalAlignment="Center" Margin="0,6,0,0" />
-      <TextBox x:Name="InterFrameBox" Grid.Row="2" Grid.Column="1" Text="" Margin="0,6,0,0" />
+      <TextBox x:Name="InterFrameBox" Grid.Row="2" Grid.Column="1" Text="" Watermark="예: 20 (빈칸 = 보레이트로 자동 계산)" Margin="0,6,0,0" />
     </Grid>
 
     <TextBlock x:Name="ErrorText" Foreground="OrangeRed" IsVisible="False" />
