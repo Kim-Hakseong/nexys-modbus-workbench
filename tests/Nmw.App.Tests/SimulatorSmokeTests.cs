@@ -116,6 +116,48 @@ public sealed class SimulatorSmokeTests
     }
 
     [AvaloniaFact]
+    public async Task RtuMode_WithoutPortName_ShowsMessage()
+    {
+        var viewModel = new MainWindowViewModel();
+        var window = new MainWindow { DataContext = viewModel };
+        window.Show();
+
+        var simulator = viewModel.Simulator;
+        simulator.ModeIndex = 1; // RTU 시리얼
+        Assert.True(simulator.IsRtuMode);
+        Assert.False(simulator.IsTcpMode);
+
+        simulator.SerialPortText = "";
+        await simulator.ToggleCommand.ExecuteAsync(null);
+
+        Assert.False(simulator.IsRunning);
+        Assert.Contains("시리얼 포트", simulator.Message, StringComparison.Ordinal);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task DataStore_PersistsAcrossSimulatorRestart()
+    {
+        var viewModel = new MainWindowViewModel();
+        var window = new MainWindow { DataContext = viewModel };
+        window.Show();
+
+        var simulator = viewModel.Simulator;
+        simulator.PortText = "0";
+        await simulator.ToggleCommand.ExecuteAsync(null);
+        simulator.HoldingRows[0].ValueText = "777";
+        await simulator.StopAsync();
+
+        // 재시작해도 공용 저장소 값 유지 (TCP/RTU 모드가 같은 저장소 공유)
+        await simulator.ToggleCommand.ExecuteAsync(null);
+        simulator.RefreshNow();
+        Assert.Equal("777", simulator.HoldingRows[0].ValueText);
+
+        await simulator.StopAsync();
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public async Task SimulatorStart_InvalidPort_ShowsMessage()
     {
         var viewModel = new MainWindowViewModel();

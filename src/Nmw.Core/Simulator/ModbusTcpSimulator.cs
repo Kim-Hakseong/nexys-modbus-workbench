@@ -19,14 +19,11 @@ public sealed record SimulatorOptions
 /// 인메모리 슬레이브로, FC01~06, 15, 16을 완전 지원하고 범위 밖 주소에는
 /// Illegal Data Address(0x02)를 반환한다. 루프백(127.0.0.1)에만 바인딩하며
 /// 다중 클라이언트 동시 접속을 지원한다. 모든 Unit ID에 응답(에코)한다.
+/// 데이터는 <see cref="SimulatorDataStore"/>에 저장되며 RTU 슬레이브와 공유할 수 있다.
 /// </summary>
 public sealed class ModbusTcpSimulator : IAsyncDisposable
 {
-    private readonly object _gate = new();
-    private readonly ushort[] _holding;
-    private readonly ushort[] _input;
-    private readonly bool[] _coils;
-    private readonly bool[] _discrete;
+    private readonly SimulatorDataStore _store;
     private readonly List<Task> _clientTasks = [];
 
     private TcpListener? _listener;
@@ -35,25 +32,21 @@ public sealed class ModbusTcpSimulator : IAsyncDisposable
     private long _requestCount;
     private int _clientCount;
 
-    /// <summary>옵션으로 시뮬레이터를 만든다 (Start 전에는 리슨하지 않음).</summary>
+    /// <summary>옵션과 (선택) 공유 데이터 저장소로 시뮬레이터를 만든다.</summary>
     /// <param name="options">옵션. null이면 기본값.</param>
-    public ModbusTcpSimulator(SimulatorOptions? options = null)
+    /// <param name="store">공유할 데이터 저장소. null이면 옵션의 AreaSize로 새로 만든다.</param>
+    public ModbusTcpSimulator(SimulatorOptions? options = null, SimulatorDataStore? store = null)
     {
         Options = options ?? new SimulatorOptions();
-        if (Options.AreaSize is < 1 or > 65536)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(options), Options.AreaSize, "AreaSize는 1..65536 범위여야 합니다.");
-        }
-
-        _holding = new ushort[Options.AreaSize];
-        _input = new ushort[Options.AreaSize];
-        _coils = new bool[Options.AreaSize];
-        _discrete = new bool[Options.AreaSize];
+        _store = store ?? new SimulatorDataStore(Options.AreaSize);
+        _store.DataChangedByMaster += OnStoreDataChanged;
     }
 
-    /// <summary>적용된 옵션.</summary>
+    /// <summary>적용된 옵션. 공유 저장소를 받았다면 영역 크기는 저장소 기준이다.</summary>
     public SimulatorOptions Options { get; }
+
+    /// <summary>데이터 저장소 (RTU 슬레이브와 공유 가능).</summary>
+    public SimulatorDataStore Store => _store;
 
     /// <summary>리슨 중 여부.</summary>
     public bool IsRunning => _listener is not null;
@@ -118,114 +111,54 @@ public sealed class ModbusTcpSimulator : IAsyncDisposable
     }
 
     /// <summary>정지 후 자원을 정리한다.</summary>
-    public async ValueTask DisposeAsync() => await StopAsync().ConfigureAwait(false);
+    public async ValueTask DisposeAsync()
+    {
+        await StopAsync().ConfigureAwait(false);
+        _store.DataChangedByMaster -= OnStoreDataChanged;
+    }
 
     /// <summary>홀딩 레지스터 값을 읽는다.</summary>
     /// <param name="address">주소 (0-base).</param>
-    public ushort GetHoldingRegister(int address)
-    {
-        lock (_gate)
-        {
-            return _holding[CheckAddress(address)];
-        }
-    }
+    public ushort GetHoldingRegister(int address) => _store.GetHoldingRegister(address);
 
     /// <summary>홀딩 레지스터 값을 쓴다.</summary>
     /// <param name="address">주소 (0-base).</param>
     /// <param name="value">값.</param>
-    public void SetHoldingRegister(int address, ushort value)
-    {
-        lock (_gate)
-        {
-            _holding[CheckAddress(address)] = value;
-        }
-    }
+    public void SetHoldingRegister(int address, ushort value) => _store.SetHoldingRegister(address, value);
 
     /// <summary>입력 레지스터 값을 읽는다.</summary>
     /// <param name="address">주소 (0-base).</param>
-    public ushort GetInputRegister(int address)
-    {
-        lock (_gate)
-        {
-            return _input[CheckAddress(address)];
-        }
-    }
+    public ushort GetInputRegister(int address) => _store.GetInputRegister(address);
 
-    /// <summary>입력 레지스터 값을 쓴다 (시뮬레이터 UI/코드 전용 — 마스터는 읽기만 가능).</summary>
+    /// <summary>입력 레지스터 값을 쓴다 (시뮬레이터 전용 — 마스터는 읽기만 가능).</summary>
     /// <param name="address">주소 (0-base).</param>
     /// <param name="value">값.</param>
-    public void SetInputRegister(int address, ushort value)
-    {
-        lock (_gate)
-        {
-            _input[CheckAddress(address)] = value;
-        }
-    }
+    public void SetInputRegister(int address, ushort value) => _store.SetInputRegister(address, value);
 
     /// <summary>코일 값을 읽는다.</summary>
     /// <param name="address">주소 (0-base).</param>
-    public bool GetCoil(int address)
-    {
-        lock (_gate)
-        {
-            return _coils[CheckAddress(address)];
-        }
-    }
+    public bool GetCoil(int address) => _store.GetCoil(address);
 
     /// <summary>코일 값을 쓴다.</summary>
     /// <param name="address">주소 (0-base).</param>
     /// <param name="value">값.</param>
-    public void SetCoil(int address, bool value)
-    {
-        lock (_gate)
-        {
-            _coils[CheckAddress(address)] = value;
-        }
-    }
+    public void SetCoil(int address, bool value) => _store.SetCoil(address, value);
 
     /// <summary>접점 값을 읽는다.</summary>
     /// <param name="address">주소 (0-base).</param>
-    public bool GetDiscreteInput(int address)
-    {
-        lock (_gate)
-        {
-            return _discrete[CheckAddress(address)];
-        }
-    }
+    public bool GetDiscreteInput(int address) => _store.GetDiscreteInput(address);
 
-    /// <summary>접점 값을 쓴다 (시뮬레이터 UI/코드 전용 — 마스터는 읽기만 가능).</summary>
+    /// <summary>접점 값을 쓴다 (시뮬레이터 전용 — 마스터는 읽기만 가능).</summary>
     /// <param name="address">주소 (0-base).</param>
     /// <param name="value">값.</param>
-    public void SetDiscreteInput(int address, bool value)
-    {
-        lock (_gate)
-        {
-            _discrete[CheckAddress(address)] = value;
-        }
-    }
+    public void SetDiscreteInput(int address, bool value) => _store.SetDiscreteInput(address, value);
 
-    /// <summary>
-    /// 홀딩·입력 레지스터 주소 0..count-1 값을 1씩 증가시킨다 (값 자동 변화 데모용, 래핑).
-    /// </summary>
+    /// <summary>홀딩·입력 레지스터 주소 0..count-1 값을 1씩 증가시킨다 (값 자동 변화 데모용).</summary>
     /// <param name="count">증가시킬 주소 개수.</param>
-    public void IncrementRegisters(int count)
-    {
-        lock (_gate)
-        {
-            var n = Math.Clamp(count, 0, Options.AreaSize);
-            for (var i = 0; i < n; i++)
-            {
-                _holding[i] = unchecked((ushort)(_holding[i] + 1));
-                _input[i] = unchecked((ushort)(_input[i] + 1));
-            }
-        }
-    }
+    public void IncrementRegisters(int count) => _store.IncrementRegisters(count);
 
-    private int CheckAddress(int address) =>
-        address >= 0 && address < Options.AreaSize
-            ? address
-            : throw new ArgumentOutOfRangeException(
-                nameof(address), address, $"주소는 0..{Options.AreaSize - 1} 범위여야 합니다.");
+    private void OnStoreDataChanged(object? sender, EventArgs e) =>
+        DataChangedByMaster?.Invoke(this, EventArgs.Empty);
 
     private async Task AcceptLoopAsync(TcpListener listener, CancellationToken ct)
     {
@@ -290,12 +223,7 @@ public sealed class ModbusTcpSimulator : IAsyncDisposable
                 while (assembler.TryTakeFrame(out var frame))
                 {
                     Interlocked.Increment(ref _requestCount);
-                    var responsePdu = ProcessPdu(frame.Pdu, out var dataChanged);
-                    if (dataChanged)
-                    {
-                        DataChangedByMaster?.Invoke(this, EventArgs.Empty);
-                    }
-
+                    var responsePdu = _store.ProcessPdu(frame.Pdu);
                     var adu = MbapFraming.BuildAdu(frame.TransactionId, frame.UnitId, responsePdu);
                     try
                     {
@@ -321,219 +249,5 @@ public sealed class ModbusTcpSimulator : IAsyncDisposable
         {
             Interlocked.Decrement(ref _clientCount);
         }
-    }
-
-    private static byte[] ExceptionPdu(byte functionCode, byte exceptionCode) =>
-        [(byte)(functionCode | 0x80), exceptionCode];
-
-    private static ushort ReadU16(byte[] pdu, int offset) =>
-        (ushort)((pdu[offset] << 8) | pdu[offset + 1]);
-
-    private byte[] ProcessPdu(byte[] pdu, out bool dataChanged)
-    {
-        dataChanged = false;
-        if (pdu.Length < 1)
-        {
-            return ExceptionPdu(0, 0x01);
-        }
-
-        lock (_gate)
-        {
-            var fc = pdu[0];
-            switch (fc)
-            {
-                case 0x01:
-                    return ReadBits(pdu, _coils);
-                case 0x02:
-                    return ReadBits(pdu, _discrete);
-                case 0x03:
-                    return ReadRegisters(pdu, _holding);
-                case 0x04:
-                    return ReadRegisters(pdu, _input);
-                case 0x05:
-                    return WriteSingleCoil(pdu, out dataChanged);
-                case 0x06:
-                    return WriteSingleRegister(pdu, out dataChanged);
-                case 0x0F:
-                    return WriteMultipleCoils(pdu, out dataChanged);
-                case 0x10:
-                    return WriteMultipleRegisters(pdu, out dataChanged);
-                default:
-                    return ExceptionPdu(fc, 0x01);
-            }
-        }
-    }
-
-    private static byte[] ReadBits(byte[] pdu, bool[] map)
-    {
-        var fc = pdu[0];
-        if (pdu.Length != 5)
-        {
-            return ExceptionPdu(fc, 0x03);
-        }
-
-        var address = ReadU16(pdu, 1);
-        var quantity = ReadU16(pdu, 3);
-        if (quantity is < 1 or > 2000)
-        {
-            return ExceptionPdu(fc, 0x03);
-        }
-
-        if (address + quantity > map.Length)
-        {
-            return ExceptionPdu(fc, 0x02);
-        }
-
-        var byteCount = (byte)((quantity + 7) / 8);
-        var response = new byte[2 + byteCount];
-        response[0] = fc;
-        response[1] = byteCount;
-        for (var i = 0; i < quantity; i++)
-        {
-            if (map[address + i])
-            {
-                response[2 + (i / 8)] |= (byte)(1 << (i % 8));
-            }
-        }
-
-        return response;
-    }
-
-    private static byte[] ReadRegisters(byte[] pdu, ushort[] map)
-    {
-        var fc = pdu[0];
-        if (pdu.Length != 5)
-        {
-            return ExceptionPdu(fc, 0x03);
-        }
-
-        var address = ReadU16(pdu, 1);
-        var quantity = ReadU16(pdu, 3);
-        if (quantity is < 1 or > 125)
-        {
-            return ExceptionPdu(fc, 0x03);
-        }
-
-        if (address + quantity > map.Length)
-        {
-            return ExceptionPdu(fc, 0x02);
-        }
-
-        var response = new byte[2 + (quantity * 2)];
-        response[0] = fc;
-        response[1] = (byte)(quantity * 2);
-        for (var i = 0; i < quantity; i++)
-        {
-            response[2 + (i * 2)] = (byte)(map[address + i] >> 8);
-            response[3 + (i * 2)] = (byte)map[address + i];
-        }
-
-        return response;
-    }
-
-    private byte[] WriteSingleCoil(byte[] pdu, out bool dataChanged)
-    {
-        dataChanged = false;
-        if (pdu.Length != 5)
-        {
-            return ExceptionPdu(0x05, 0x03);
-        }
-
-        var address = ReadU16(pdu, 1);
-        var value = ReadU16(pdu, 3);
-        if (value is not (0xFF00 or 0x0000))
-        {
-            return ExceptionPdu(0x05, 0x03);
-        }
-
-        if (address >= _coils.Length)
-        {
-            return ExceptionPdu(0x05, 0x02);
-        }
-
-        _coils[address] = value == 0xFF00;
-        dataChanged = true;
-        return pdu; // 요청 에코
-    }
-
-    private byte[] WriteSingleRegister(byte[] pdu, out bool dataChanged)
-    {
-        dataChanged = false;
-        if (pdu.Length != 5)
-        {
-            return ExceptionPdu(0x06, 0x03);
-        }
-
-        var address = ReadU16(pdu, 1);
-        if (address >= _holding.Length)
-        {
-            return ExceptionPdu(0x06, 0x02);
-        }
-
-        _holding[address] = ReadU16(pdu, 3);
-        dataChanged = true;
-        return pdu; // 요청 에코
-    }
-
-    private byte[] WriteMultipleCoils(byte[] pdu, out bool dataChanged)
-    {
-        dataChanged = false;
-        if (pdu.Length < 6)
-        {
-            return ExceptionPdu(0x0F, 0x03);
-        }
-
-        var address = ReadU16(pdu, 1);
-        var quantity = ReadU16(pdu, 3);
-        var byteCount = pdu[5];
-        if (quantity is < 1 or > 1968 || byteCount != (quantity + 7) / 8 ||
-            pdu.Length != 6 + byteCount)
-        {
-            return ExceptionPdu(0x0F, 0x03);
-        }
-
-        if (address + quantity > _coils.Length)
-        {
-            return ExceptionPdu(0x0F, 0x02);
-        }
-
-        for (var i = 0; i < quantity; i++)
-        {
-            _coils[address + i] = (pdu[6 + (i / 8)] & (1 << (i % 8))) != 0;
-        }
-
-        dataChanged = true;
-        return [0x0F, pdu[1], pdu[2], pdu[3], pdu[4]];
-    }
-
-    private byte[] WriteMultipleRegisters(byte[] pdu, out bool dataChanged)
-    {
-        dataChanged = false;
-        if (pdu.Length < 6)
-        {
-            return ExceptionPdu(0x10, 0x03);
-        }
-
-        var address = ReadU16(pdu, 1);
-        var quantity = ReadU16(pdu, 3);
-        var byteCount = pdu[5];
-        if (quantity is < 1 or > 123 || byteCount != quantity * 2 ||
-            pdu.Length != 6 + byteCount)
-        {
-            return ExceptionPdu(0x10, 0x03);
-        }
-
-        if (address + quantity > _holding.Length)
-        {
-            return ExceptionPdu(0x10, 0x02);
-        }
-
-        for (var i = 0; i < quantity; i++)
-        {
-            _holding[address + i] = ReadU16(pdu, 6 + (i * 2));
-        }
-
-        dataChanged = true;
-        return [0x10, pdu[1], pdu[2], pdu[3], pdu[4]];
     }
 }

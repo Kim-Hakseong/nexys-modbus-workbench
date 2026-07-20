@@ -10,14 +10,44 @@
     <!-- 설정/상태 -->
     <StackPanel DockPanel.Dock="Top" Spacing="8">
       <TextBlock TextWrapping="Wrap" Foreground="Gray"
-                 Text="물리 장비 없이 테스트할 수 있는 내장 Modbus TCP 슬레이브입니다. 시작 후 [연결...]에서 Modbus TCP, 호스트 127.0.0.1, 아래 포트로 연결하세요. 모든 Unit ID에 응답합니다." />
+                 Text="물리 장비 없이 테스트할 수 있는 내장 슬레이브입니다. 모든 Unit ID에 응답합니다." />
       <StackPanel Orientation="Horizontal" Spacing="8">
-        <TextBlock Text="포트" VerticalAlignment="Center" />
-        <TextBox Text="{Binding PortText}" Width="70" Watermark="예: 1502" IsEnabled="{Binding !IsRunning}" />
+        <TextBlock Text="모드" VerticalAlignment="Center" />
+        <ComboBox ItemsSource="{Binding ModeOptions}" SelectedIndex="{Binding ModeIndex}"
+                  Width="220" IsEnabled="{Binding !IsRunning}" />
         <TextBlock Text="표시 개수" VerticalAlignment="Center" />
         <TextBox Text="{Binding DisplayCountText}" Width="60" Watermark="예: 20" IsEnabled="{Binding !IsRunning}" />
         <Button Content="시작/정지" Command="{Binding ToggleCommand}" Classes="accent" />
         <ToggleButton Content="값 자동 변화" IsChecked="{Binding AutoChange}" />
+      </StackPanel>
+
+      <!-- TCP 모드 -->
+      <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsTcpMode}">
+        <TextBlock Text="포트" VerticalAlignment="Center" />
+        <TextBox Text="{Binding PortText}" Width="70" Watermark="예: 1502" IsEnabled="{Binding !IsRunning}" />
+        <TextBlock Foreground="Gray" VerticalAlignment="Center"
+                   Text="시작 후 [연결...]에서 Modbus TCP, 호스트 127.0.0.1, 이 포트로 연결" />
+      </StackPanel>
+
+      <!-- RTU 시리얼 모드 -->
+      <StackPanel Spacing="6" IsVisible="{Binding IsRtuMode}">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="포트" VerticalAlignment="Center" />
+          <AutoCompleteBox Text="{Binding SerialPortText}" ItemsSource="{Binding SerialPortNames}"
+                           Width="140" Watermark="예: COM4" MinimumPrefixLength="0"
+                           IsEnabled="{Binding !IsRunning}" />
+          <TextBlock Text="보레이트" VerticalAlignment="Center" />
+          <ComboBox ItemsSource="{Binding BaudOptions}" SelectedIndex="{Binding BaudIndex}"
+                    Width="90" IsEnabled="{Binding !IsRunning}" />
+          <TextBlock Text="패리티" VerticalAlignment="Center" />
+          <ComboBox ItemsSource="{Binding ParityOptions}" SelectedIndex="{Binding ParityIndex}"
+                    Width="80" IsEnabled="{Binding !IsRunning}" />
+          <TextBlock Text="정지" VerticalAlignment="Center" />
+          <ComboBox ItemsSource="{Binding StopBitsOptions}" SelectedIndex="{Binding StopBitsIndex}"
+                    Width="55" IsEnabled="{Binding !IsRunning}" />
+        </StackPanel>
+        <TextBlock TextWrapping="Wrap" Foreground="Gray"
+                   Text="같은 PC에서 테스트하려면 가상 COM 포트 쌍(예: com0com으로 COM3↔COM4 생성)이 필요합니다. 슬레이브를 COM4에 시작하고 [연결...]에서 RTU COM3으로 연결하세요. 또는 서로 배선한 USB-RS485 컨버터 2개를 사용합니다. 통신 설정(보레이트 등)은 마스터와 동일해야 합니다." />
       </StackPanel>
       <StackPanel Orientation="Horizontal" Spacing="12">
         <TextBlock Text="{Binding StatusText}" />

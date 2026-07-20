@@ -180,3 +180,21 @@
 - [결정] 시뮬레이터는 PRD P2 "간이 슬레이브 시뮬레이터"를 조기 구현한 것 (사용자 요청: 물리 장비 없이 확실한 테스트 수단 필요). 테스트 전용 TestSlave(지연/TxId 오염 주입)는 별도 유지 — 프로덕션 시뮬레이터에 결함 주입 훅을 넣지 않기 위함.
 - [결정] 기본 포트 1502 (Windows에서 502는 관리자 권한 필요), 127.0.0.1 전용 바인딩(방화벽 경고 없음), 영역 크기 기본 1000 (범위 밖 주소로 exception 표시 테스트 가능).
 - 다음 세션 참고: 남은 개선 후보는 자동 재접속(F-01), RTU 실기 검증, CSV 내보내기 등 P2 항목.
+
+## S2 — RTU(시리얼) 슬레이브 시뮬레이터 추가 · 2026-07-21 08:12
+- 상태: ✅ 완료
+- 생성/수정 파일:
+  - src/Nmw.Core/Simulator/SimulatorDataStore.cs (신설 — 데이터 영역 + ProcessPdu를 TCP 시뮬레이터에서 추출, TCP/RTU 공유)
+  - src/Nmw.Core/Simulator/ModbusTcpSimulator.cs (공용 저장소 사용으로 리팩터링, 공개 API 유지)
+  - src/Nmw.Core/Framing/RtuRequestAssembler.cs (신설 — 슬레이브 측 요청 길이 예측: FC01~06=8바이트 고정, FC15/16=byteCount 후 9+n 확정, CRC 검증, Reset 재사용)
+  - src/Nmw.Core/Simulator/ModbusRtuSlaveSimulator.cs (신설 — RtuSlaveEngine(스트림 기반, 테스트 가능) + SerialPort 래퍼. CRC 오류 요청은 실슬레이브처럼 무응답 폐기)
+  - src/Nmw.App/ViewModels/SimulatorViewModel.cs (모드 선택 TCP/RTU, 시리얼 설정, 공용 저장소 — 재시작해도 값 유지)
+  - src/Nmw.App/Views/SimulatorWindow.axaml (모드 콤보 + 시리얼 패널 + com0com 안내), HelpWindow(⑤ 항목), README, SMOKE_CHECKLIST
+  - tests/Nmw.Core.Tests/RtuRequestAssemblerTests.cs (8케이스, §7.1 골든 요청 프레임)
+  - tests/Nmw.Integration.Tests/RtuSlaveEngineTests.cs (6케이스 — 인메모리 duplex 파이프로 FC03 골든 왕복, FC06/16 쓰기, CRC 오염 무응답+재동기화, 연속 2요청, 범위 밖 exception 프레임)
+  - tests/Nmw.App.Tests/SimulatorSmokeTests.cs (RTU 모드 검증 + 저장소 유지 2케이스 추가)
+- 테스트: 234/234 passed (Core 169 + Integration 23 + App 42, dotnet build 경고 0, 에러 0)
+- [결정] RTU 슬레이브 처리부(RtuSlaveEngine)를 SerialPort와 분리해 스트림 기반으로 구현 — macOS/CI에 시리얼 하드웨어가 없어도 인메모리 duplex 파이프로 프레이밍·처리·재동기화를 완전 검증하기 위함. 실포트 검증은 Windows + com0com 실기 체크리스트 항목으로 남김.
+- [결정] CRC 불일치/미지원 FC 요청은 실제 RTU 슬레이브 동작대로 무응답 폐기 후 재동기화(Reset). 시뮬레이터 데이터 저장소는 TCP/RTU가 공유하며 시뮬레이터 재시작에도 값이 유지된다.
+- [미정] (사람 확인) Windows에서 com0com 가상 포트 쌍 대상 실기 스모크 — 체크리스트 7장에 추가됨.
+- 다음 세션 참고: 남은 개선 후보는 자동 재접속(F-01), CSV 내보내기 등 P2 항목.
