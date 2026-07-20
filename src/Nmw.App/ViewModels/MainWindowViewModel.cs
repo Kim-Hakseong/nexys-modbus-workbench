@@ -42,6 +42,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
     /// <summary>트래픽 로그 (TX/RX raw hex + 오류, 링버퍼 5000라인).</summary>
     public TrafficLogViewModel TrafficLog { get; } = new();
 
+    /// <summary>내장 슬레이브 시뮬레이터 (물리 장비 없는 테스트용).</summary>
+    public SimulatorViewModel Simulator { get; } = new();
+
     /// <summary>기본 폴 1개로 뷰모델을 만든다.</summary>
     public MainWindowViewModel()
     {

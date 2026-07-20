@@ -17,7 +17,27 @@ public sealed partial class MainWindow : Window
         InitializeComponent();
     }
 
+    private SimulatorWindow? _simulatorWindow;
+
     private MainWindowViewModel? ViewModel => DataContext as MainWindowViewModel;
+
+    private void OnSimulatorClick(object? sender, RoutedEventArgs e)
+    {
+        if (ViewModel is not { } viewModel)
+        {
+            return;
+        }
+
+        if (_simulatorWindow is { IsVisible: true })
+        {
+            _simulatorWindow.Activate();
+            return;
+        }
+
+        _simulatorWindow = new SimulatorWindow { DataContext = viewModel.Simulator };
+        _simulatorWindow.Closed += (_, _) => _simulatorWindow = null;
+        _simulatorWindow.Show(this);
+    }
 
     private async void OnConnectClick(object? sender, RoutedEventArgs e)
     {

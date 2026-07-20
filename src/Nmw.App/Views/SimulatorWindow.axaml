@@ -1,0 +1,65 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Nmw.App.Views.SimulatorWindow"
+        x:CompileBindings="False"
+        Title="내장 슬레이브 시뮬레이터"
+        Width="520" Height="620"
+        WindowStartupLocation="CenterOwner">
+  <DockPanel Margin="12">
+
+    <!-- 설정/상태 -->
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <TextBlock TextWrapping="Wrap" Foreground="Gray"
+                 Text="물리 장비 없이 테스트할 수 있는 내장 Modbus TCP 슬레이브입니다. 시작 후 [연결...]에서 Modbus TCP, 호스트 127.0.0.1, 아래 포트로 연결하세요. 모든 Unit ID에 응답합니다." />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="포트" VerticalAlignment="Center" />
+        <TextBox Text="{Binding PortText}" Width="70" IsEnabled="{Binding !IsRunning}" />
+        <TextBlock Text="표시 개수" VerticalAlignment="Center" />
+        <TextBox Text="{Binding DisplayCountText}" Width="60" IsEnabled="{Binding !IsRunning}" />
+        <Button Content="시작/정지" Command="{Binding ToggleCommand}" Classes="accent" />
+        <ToggleButton Content="값 자동 변화" IsChecked="{Binding AutoChange}" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="12">
+        <TextBlock Text="{Binding StatusText}" />
+        <TextBlock Text="{Binding Message}" Foreground="OrangeRed" />
+      </StackPanel>
+    </StackPanel>
+
+    <!-- 데이터 영역 -->
+    <TabControl Margin="0,8,0,0">
+      <TabItem Header="홀딩 레지스터">
+        <DataGrid ItemsSource="{Binding HoldingRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
+            <DataGridTextColumn Header="값 (10진/0x)" Binding="{Binding ValueText}" Width="*" IsReadOnly="False" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </TabItem>
+      <TabItem Header="입력 레지스터">
+        <DataGrid ItemsSource="{Binding InputRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
+            <DataGridTextColumn Header="값 (10진/0x)" Binding="{Binding ValueText}" Width="*" IsReadOnly="False" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </TabItem>
+      <TabItem Header="코일">
+        <DataGrid ItemsSource="{Binding CoilRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
+            <DataGridCheckBoxColumn Header="ON" Binding="{Binding Value}" Width="*" IsReadOnly="False" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </TabItem>
+      <TabItem Header="접점">
+        <DataGrid ItemsSource="{Binding DiscreteRows}" AutoGenerateColumns="False" CanUserReorderColumns="False">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="주소" Binding="{Binding Address}" Width="100" IsReadOnly="True" />
+            <DataGridCheckBoxColumn Header="ON" Binding="{Binding Value}" Width="*" IsReadOnly="False" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </TabItem>
+    </TabControl>
+
+  </DockPanel>
+</Window>

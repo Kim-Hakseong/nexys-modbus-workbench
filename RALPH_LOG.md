@@ -165,3 +165,18 @@
 - [결정] pdb/xml 문서 파일이 publish 폴더에 포함되나 단일 exe 실행에는 불필요 — 배포 시 exe만 복사하면 됨을 README에 명시(산출물 경로로 안내).
 - [미정] (사람 확인 필요) ① 실제 Windows PC + .NET 미설치 환경에서 exe 실행 확인, ② USB-RS485 실물 장비 대상 RTU 시리얼 테스트, ③ F-01 자동 재접속은 미구현 상태(연결 끊김은 오류로 표시) — 필요 시 후속 사이클(P2)에서 채널 서비스로 추가.
 - 다음 세션 참고: M1~M10 전체 완료. 남은 개선 후보: 자동 재접속, RTU 실기 검증, P2 항목(CSV 내보내기, 값 변화 하이라이트, 시뮬레이터 모드).
+
+## S1 — 내장 슬레이브 시뮬레이터 (장비 없는 테스트, P2 조기 구현) · 2026-07-20 21:02
+- 상태: ✅ 완료
+- 생성/수정 파일:
+  - src/Nmw.Core/Simulator/ModbusTcpSimulator.cs (FC01~06,15,16 완전 지원 인메모리 슬레이브: 루프백 바인딩, 다중 클라이언트, 모든 UnitId 응답, 스레드 안전 데이터 영역 4종, 범위 밖=0x02·잘못된 개수/값=0x03, 요청/클라이언트 카운트, DataChangedByMaster 이벤트, IncrementRegisters)
+  - src/Nmw.App/ViewModels/SimulatorViewModel.cs (시작/정지, 포트·표시 개수 설정, 값 편집 그리드 4탭, 값 자동 변화, 500ms 갱신 타이머)
+  - src/Nmw.App/Views/SimulatorWindow.axaml(.cs) (비모달 창), MainWindow에 [시뮬레이터...] 버튼
+  - tests/Nmw.Integration.Tests/SimulatorTests.cs (7케이스: 전 FC 왕복, exception, 동시 2클라이언트, 쓰기 이벤트, 재시작, 임의 UnitId)
+  - tests/Nmw.App.Tests/SimulatorSmokeTests.cs (3케이스: 앱 단독 전체 루프, 자동 변화, 포트 오류)
+  - README.md ("장비 없이 테스트하기" 섹션), SMOKE_CHECKLIST.md (7장 시뮬레이터 체크 + 장비 없이 수행 가능 명시)
+- 테스트: 216/216 passed (Core 161 + Integration 17 + App 38, dotnet build 경고 0, 에러 0)
+- 스모크 수행 내용: 헤드리스로 앱 단독 전체 루프 검증 — 시뮬레이터 시작(임시 포트) → 그리드에서 값 편집(홀딩 123, 코일 ON) → 마스터 127.0.0.1 연결 → 폴 그리드 값 확인 → FC06 쓰기 456 → 시뮬레이터 그리드·폴 그리드 동시 반영 → 코일 폴 탭 추가 확인 → 정지. 자동 변화 ON 시 폴 값 연속 증가 확인. 실제 앱 10초 실행 크래시 없음(APP_ALIVE).
+- [결정] 시뮬레이터는 PRD P2 "간이 슬레이브 시뮬레이터"를 조기 구현한 것 (사용자 요청: 물리 장비 없이 확실한 테스트 수단 필요). 테스트 전용 TestSlave(지연/TxId 오염 주입)는 별도 유지 — 프로덕션 시뮬레이터에 결함 주입 훅을 넣지 않기 위함.
+- [결정] 기본 포트 1502 (Windows에서 502는 관리자 권한 필요), 127.0.0.1 전용 바인딩(방화벽 경고 없음), 영역 크기 기본 1000 (범위 밖 주소로 exception 표시 테스트 가능).
+- 다음 세션 참고: 남은 개선 후보는 자동 재접속(F-01), RTU 실기 검증, CSV 내보내기 등 P2 항목.

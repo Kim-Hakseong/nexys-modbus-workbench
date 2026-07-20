@@ -21,6 +21,8 @@
         <Separator Width="1" Background="#33888888" />
         <Button Content="열기..." Click="OnOpenWorkspaceClick" />
         <Button Content="저장..." Click="OnSaveWorkspaceClick" />
+        <Separator Width="1" Background="#33888888" />
+        <Button Content="시뮬레이터..." Click="OnSimulatorClick" />
         <TextBlock Text="{Binding ConnectionStatus}" VerticalAlignment="Center" Margin="12,0,0,0" />
       </StackPanel>
     </Border>
