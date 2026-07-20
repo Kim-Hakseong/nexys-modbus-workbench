@@ -23,6 +23,8 @@
         <Button Content="저장..." Click="OnSaveWorkspaceClick" />
         <Separator Width="1" Background="#33888888" />
         <Button Content="시뮬레이터..." Click="OnSimulatorClick" />
+        <Button Content="도움말" Click="OnHelpClick" FontSize="12" Padding="8,4"
+                ToolTip.Tip="간단 사용설명서 (시작 시 자동 표시)" />
         <TextBlock Text="{Binding ConnectionStatus}" VerticalAlignment="Center" Margin="12,0,0,0" />
       </StackPanel>
     </Border>

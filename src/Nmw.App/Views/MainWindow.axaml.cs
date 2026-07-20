@@ -18,8 +18,39 @@ public sealed partial class MainWindow : Window
     }
 
     private SimulatorWindow? _simulatorWindow;
+    private HelpWindow? _helpWindow;
 
     private MainWindowViewModel? ViewModel => DataContext as MainWindowViewModel;
+
+    /// <inheritdoc />
+    protected override void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
+        ShowHelp(); // 실행 시 간단 사용설명서 자동 표시
+    }
+
+    /// <inheritdoc />
+    protected override void OnClosed(EventArgs e)
+    {
+        _helpWindow?.Close();
+        _simulatorWindow?.Close();
+        base.OnClosed(e);
+    }
+
+    private void OnHelpClick(object? sender, RoutedEventArgs e) => ShowHelp();
+
+    private void ShowHelp()
+    {
+        if (_helpWindow is { IsVisible: true })
+        {
+            _helpWindow.Activate();
+            return;
+        }
+
+        _helpWindow = new HelpWindow();
+        _helpWindow.Closed += (_, _) => _helpWindow = null;
+        _helpWindow.Show(this);
+    }
 
     private void OnSimulatorClick(object? sender, RoutedEventArgs e)
     {
