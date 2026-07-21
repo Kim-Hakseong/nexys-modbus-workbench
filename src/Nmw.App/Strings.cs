@@ -4,7 +4,7 @@ namespace Nmw.App;
 public static class Strings
 {
     /// <summary>앱 타이틀.</summary>
-    public const string AppTitle = "Nexys Modbus Workbench";
+    public const string AppTitle = "Modbus Workbench";
 
     /// <summary>연결되지 않음 상태.</summary>
     public const string NotConnected = "연결 안 됨";

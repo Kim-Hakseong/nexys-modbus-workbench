@@ -4,30 +4,30 @@
              RequestedThemeVariant="Light">
 
   <Application.Resources>
-    <!-- Crextio 레퍼런스 팔레트: 웜 그레이 → 소프트 옐로 그라데이션, 차콜 잉크, 옐로 악센트 -->
-    <Color x:Key="SystemAccentColor">#F2C744</Color>
-    <Color x:Key="SystemAccentColorDark1">#E2B838</Color>
-    <Color x:Key="SystemAccentColorDark2">#CBA32C</Color>
-    <Color x:Key="SystemAccentColorDark3">#AC8921</Color>
-    <Color x:Key="SystemAccentColorLight1">#F5D164</Color>
-    <Color x:Key="SystemAccentColorLight2">#F8DD86</Color>
-    <Color x:Key="SystemAccentColorLight3">#FBE8A8</Color>
+    <!-- 팔레트: Crextio 레이아웃 + NEXYS 와인 레드(#7A1020) 포인트 컬러 -->
+    <Color x:Key="SystemAccentColor">#7A1020</Color>
+    <Color x:Key="SystemAccentColorDark1">#6A0E1C</Color>
+    <Color x:Key="SystemAccentColorDark2">#5A0B18</Color>
+    <Color x:Key="SystemAccentColorDark3">#4A0913</Color>
+    <Color x:Key="SystemAccentColorLight1">#9C2030</Color>
+    <Color x:Key="SystemAccentColorLight2">#B04B57</Color>
+    <Color x:Key="SystemAccentColorLight3">#C97F86</Color>
 
     <LinearGradientBrush x:Key="AppBackgroundBrush" StartPoint="0%,0%" EndPoint="100%,100%">
       <GradientStop Color="#EDECE8" Offset="0" />
-      <GradientStop Color="#F2EDD6" Offset="0.45" />
-      <GradientStop Color="#F6E6A6" Offset="1" />
+      <GradientStop Color="#F2E5E0" Offset="0.45" />
+      <GradientStop Color="#EFCEC7" Offset="1" />
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="CardBrush" Color="#FDFCF9" />
-    <SolidColorBrush x:Key="CardSoftBrush" Color="#F7F3E6" />
+    <SolidColorBrush x:Key="CardBrush" Color="#FDFBFA" />
+    <SolidColorBrush x:Key="CardSoftBrush" Color="#F7F0ED" />
     <SolidColorBrush x:Key="InkBrush" Color="#22211D" />
     <SolidColorBrush x:Key="InkHoverBrush" Color="#3A3830" />
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#26251F" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#8E8B7E" />
-    <SolidColorBrush x:Key="AccentBrush" Color="#F2C744" />
-    <SolidColorBrush x:Key="AccentSoftBrush" Color="#F8ECC2" />
-    <SolidColorBrush x:Key="LineBrush" Color="#E6E2D3" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#7A1020" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#F4DFDB" />
+    <SolidColorBrush x:Key="LineBrush" Color="#E6DCD6" />
     <SolidColorBrush x:Key="ErrorBrush" Color="#D96C47" />
 
     <!-- Fluent 리소스 오버라이드 (탭 선택 필, 체크 토글) -->
@@ -35,12 +35,12 @@
     <SolidColorBrush x:Key="TabItemHeaderForegroundSelected" Color="#FFFFFF" />
     <SolidColorBrush x:Key="TabItemHeaderForegroundSelectedPointerOver" Color="#FFFFFF" />
     <SolidColorBrush x:Key="TabItemHeaderForegroundSelectedPressed" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="ToggleButtonBackgroundChecked" Color="#F2C744" />
-    <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver" Color="#E9BC38" />
-    <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPressed" Color="#DFB230" />
-    <SolidColorBrush x:Key="ToggleButtonForegroundChecked" Color="#22211D" />
-    <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPointerOver" Color="#22211D" />
-    <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPressed" Color="#22211D" />
+    <SolidColorBrush x:Key="ToggleButtonBackgroundChecked" Color="#7A1020" />
+    <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver" Color="#9C2030" />
+    <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPressed" Color="#5A0B18" />
+    <SolidColorBrush x:Key="ToggleButtonForegroundChecked" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPointerOver" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPressed" Color="#FFFFFF" />
 
     <!-- 메뉴 픽토그램 (24x24 벡터) -->
     <StreamGeometry x:Key="IconLink">M3.9 12C3.9 10.29 5.29 8.9 7 8.9H11V7H7C4.24 7 2 9.24 2 12C2 14.76 4.24 17 7 17H11V15.1H7C5.29 15.1 3.9 13.71 3.9 12ZM8 13H16V11H8V13ZM17 7H13V8.9H17C18.71 8.9 20.1 10.29 20.1 12C20.1 13.71 18.71 15.1 17 15.1H13V17H17C19.76 17 22 14.76 22 12C22 9.24 19.76 7 17 7Z</StreamGeometry>
@@ -131,7 +131,7 @@
     </Style>
     <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Background" Value="{StaticResource AccentBrush}" />
-      <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
     </Style>
 
     <!-- 다크(잉크) 강조 버튼 (Fluent 내장 accent 스타일보다 우선하도록 프레젠터까지 지정) -->
@@ -152,7 +152,7 @@
     </Style>
     <Style Selector="Button.accent:pressed /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Background" Value="{StaticResource AccentBrush}" />
-      <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
     </Style>
 
     <!-- 토글 버튼: 체크 시 옐로 칩 -->
@@ -259,7 +259,7 @@
       <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
     </Style>
     <Style Selector="ToggleButton:checked PathIcon">
-      <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
     </Style>
   </Application.Styles>
 </Application>

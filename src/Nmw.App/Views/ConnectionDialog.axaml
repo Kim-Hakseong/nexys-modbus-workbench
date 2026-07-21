@@ -3,6 +3,7 @@
         x:Class="Nmw.App.Views.ConnectionDialog"
         x:CompileBindings="False"
         Title="채널 연결"
+        Icon="/Assets/app.ico"
         Width="460" SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         CanResize="False">

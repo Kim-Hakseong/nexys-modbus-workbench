@@ -3,7 +3,8 @@
         x:Class="Nmw.App.Views.HelpWindow"
         x:CompileBindings="False"
         Title="간단 사용설명서"
-        Width="600 " Height="680"
+        Icon="/Assets/app.ico"
+        Width="600" Height="680"
         WindowStartupLocation="CenterOwner">
   <DockPanel Margin="14">
     <Border DockPanel.Dock="Bottom" Padding="4,10,4,0">
@@ -23,7 +24,7 @@
       <ScrollViewer Padding="16">
         <StackPanel Spacing="6" Margin="0,0,12,8">
 
-          <TextBlock FontSize="19" FontWeight="Bold" Text="Nexys Modbus Workbench 간단 사용설명서" />
+          <TextBlock FontSize="19" FontWeight="Bold" Text="Modbus Workbench 간단 사용설명서" />
           <TextBlock TextWrapping="Wrap" Classes="muted"
                      Text="Modbus 장비 진단 도구입니다. 아래 순서대로 따라 하면 됩니다." />
 
@@ -59,6 +60,33 @@
           <TextBlock TextWrapping="Wrap" Text="• 기본은 프로토콜 주소(0부터 시작). [PLC 주소(1-base)]를 켜면 40001 스타일로 표시/입력됩니다" />
           <TextBlock TextWrapping="Wrap" Text="• 예: 홀딩 레지스터 프로토콜 주소 0 = PLC 표기 40001 (코일 00001, 접점 10001, 입력 30001)" />
           <TextBlock TextWrapping="Wrap" Text="• 장비 매뉴얼 주소가 40001 형식이면 이 토글을 켜고 그대로 입력하면 됩니다" />
+          <TextBlock TextWrapping="Wrap" Margin="0,6,0,0"
+                     Text="※ 펑션코드 번호와 주소 앞자리는 일치하지 않습니다. 특히 3과 4는 서로 엇갈려 있는데, 1979년 Modicon PLC 시절부터 내려온 Modbus 표준 관례입니다:" />
+          <Border Classes="softCard" Padding="14,10" Margin="0,4,0,0">
+            <Grid ColumnDefinitions="170,150,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="데이터 영역" Classes="fieldLabel" />
+              <TextBlock Grid.Row="0" Grid.Column="1" Text="PLC 주소" Classes="fieldLabel" />
+              <TextBlock Grid.Row="0" Grid.Column="2" Text="읽기 펑션코드" Classes="fieldLabel" />
+
+              <TextBlock Grid.Row="1" Grid.Column="0" Text="코일 (Coil)" Margin="0,3,0,0" />
+              <TextBlock Grid.Row="1" Grid.Column="1" Text="0xxxx (00001~)" Margin="0,3,0,0" />
+              <TextBlock Grid.Row="1" Grid.Column="2" Text="FC01" Margin="0,3,0,0" />
+
+              <TextBlock Grid.Row="2" Grid.Column="0" Text="접점 (Discrete Input)" Margin="0,3,0,0" />
+              <TextBlock Grid.Row="2" Grid.Column="1" Text="1xxxx (10001~)" Margin="0,3,0,0" />
+              <TextBlock Grid.Row="2" Grid.Column="2" Text="FC02" Margin="0,3,0,0" />
+
+              <TextBlock Grid.Row="3" Grid.Column="0" Text="입력 레지스터" Margin="0,3,0,0" />
+              <TextBlock Grid.Row="3" Grid.Column="1" Text="3xxxx (30001~)" Margin="0,3,0,0" />
+              <TextBlock Grid.Row="3" Grid.Column="2" Text="FC04 ← 엇갈림 주의" FontWeight="SemiBold" Margin="0,3,0,0" />
+
+              <TextBlock Grid.Row="4" Grid.Column="0" Text="홀딩 레지스터" Margin="0,3,0,0" />
+              <TextBlock Grid.Row="4" Grid.Column="1" Text="4xxxx (40001~)" Margin="0,3,0,0" />
+              <TextBlock Grid.Row="4" Grid.Column="2" Text="FC03 ← 엇갈림 주의" FontWeight="SemiBold" Margin="0,3,0,0" />
+            </Grid>
+          </Border>
+          <TextBlock TextWrapping="Wrap"
+                     Text="즉, 매뉴얼에 40001번지라고 적혀 있으면 FC03으로 읽고, 30001번지면 FC04로 읽으면 됩니다." />
 
           <TextBlock FontSize="15" FontWeight="Bold" Margin="0,10,0,0" Text="7. 통신이 안 될 때 (트래픽 로그)" />
           <TextBlock TextWrapping="Wrap" Text="• 하단 [트래픽 로그]를 펼치면 실제 송수신 프레임(hex)과 오류가 시간순으로 보입니다" />

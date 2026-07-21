@@ -3,6 +3,7 @@
         x:Class="Nmw.App.Views.SimulatorWindow"
         x:CompileBindings="False"
         Title="내장 슬레이브 시뮬레이터"
+        Icon="/Assets/app.ico"
         Width="600" Height="680"
         WindowStartupLocation="CenterOwner">
   <DockPanel Margin="14">

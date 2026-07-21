@@ -3,6 +3,7 @@
         x:Class="Nmw.App.Views.WriteDialog"
         x:CompileBindings="False"
         Title="쓰기"
+        Icon="/Assets/app.ico"
         Width="470" SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         CanResize="False">

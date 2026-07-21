@@ -220,3 +220,15 @@
   - src/Nmw.App/Views/ConnectionDialog.axaml, WriteDialog.axaml, SimulatorWindow.axaml, HelpWindow.axaml (취소/연결/닫기/전송/시작·정지/값 자동 변화 버튼 아이콘)
 - 테스트: 234/234 passed (dotnet build 경고 0, 에러 0). 헤드리스 렌더 캡처로 아이콘 표시·툴바 한 줄 배치 확인, 실제 앱 실행 크래시 없음.
 - [결정] 아이콘은 이모지/비트맵 대신 Material 계열 24x24 벡터 지오메트리(StreamGeometry + PathIcon) — 레퍼런스의 모노톤 미니멀 스타일 유지, 배경색에 따라(잉크/흰색) 자동 전환. WrapPanel의 ItemSpacing은 Avalonia 11.1에 없어 자식 Margin 스타일로 간격 처리.
+
+## S5 — NEXYS 브랜딩 적용 (와인 레드 팔레트 + 로고 + 앱 아이콘) + 도움말 FC 대응표 · 2026-07-21 10:03
+- 상태: ✅ 완료
+- 생성/수정 파일:
+  - src/Nmw.App/App.axaml (포인트 컬러 옐로 → NEXYS 웹사이트 와인 레드 #7A1020(--red)·#9C2030(--red-bright)·#5A0B18(--red-deep). 그라데이션 방향/구조 유지, 끝색만 로즈 틴트 #EFCEC7. 체크 토글/pressed 전경 흰색으로 조정)
+  - src/Nmw.App/Assets/ (nexys-logo.png — 제공 로고, favicon-nxs.png — 웹사이트 파비콘, app.ico — 파비콘 256px PNG-in-ICO 변환)
+  - src/Nmw.App/Nmw.App.csproj (AvaloniaResource Assets + ApplicationIcon → exe 아이콘)
+  - src/Nmw.App/Views/MainWindow.axaml (타이틀 필 "Nexys Modbus"→"Modbus Workbench", 하단 우측 NEXYS 로고(h14) + "© 2026 NEXYS Co., Ltd. All rights reserved.", Window Icon)
+  - 전체 윈도우 5종에 Icon="/Assets/app.ico" (타이틀바/작업표시줄 아이콘 = 웹사이트 파비콘)
+  - src/Nmw.App/Views/HelpWindow.axaml (6장에 FC↔PLC 주소 프리픽스 대응표 추가 — FC03↔4xxxx/FC04↔3xxxx 엇갈림 설명)
+- 테스트: 234/234 passed (경고 0). 헤드리스 렌더 캡처로 와인 그라데이션/로고/저작권/타이틀 확인, 실행 크래시 없음.
+- [결정] 웹사이트 CSS 변수에서 포인트 컬러 추출(--red #7A1020). app.ico는 외부 도구 없이 PNG-in-ICO(Vista+) 형식으로 생성.

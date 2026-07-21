@@ -4,7 +4,8 @@
         x:Class="Nmw.App.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         x:CompileBindings="False"
-        Title="Nexys Modbus Workbench"
+        Title="Modbus Workbench"
+        Icon="/Assets/app.ico"
         Width="1280" Height="760"
         MinWidth="980" MinHeight="600">
   <Window.Styles>
@@ -18,7 +19,7 @@
     <Border DockPanel.Dock="Top" Classes="card" Padding="10,8" Margin="0,0,0,12">
       <DockPanel>
         <Border DockPanel.Dock="Left" Classes="pill" VerticalAlignment="Center" Background="{StaticResource CardBrush}">
-          <TextBlock Text="Nexys Modbus" FontWeight="SemiBold" FontSize="14" />
+          <TextBlock Text="Modbus Workbench" FontWeight="SemiBold" FontSize="14" />
         </Border>
         <TextBlock DockPanel.Dock="Right" Text="{Binding ConnectionStatus}" Classes="muted"
                    VerticalAlignment="Center" Margin="12,0,6,0" />
@@ -87,13 +88,21 @@
       </DockPanel>
     </Border>
 
-    <!-- 하단 상태 라인 -->
+    <!-- 하단 상태 라인 + 로고/저작권 -->
     <Border DockPanel.Dock="Bottom" Padding="12,8,12,2">
-      <StackPanel Orientation="Horizontal" Spacing="18">
-        <TextBlock Text="{Binding ConnectionStatus}" Classes="muted" />
-        <TextBlock Text="{Binding SelectedPoll.StatsText}" Classes="muted" />
-        <TextBlock Text="{Binding GlobalMessage}" Classes="error" />
-      </StackPanel>
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <TextBlock Text="© 2026 NEXYS Co., Ltd. All rights reserved." Classes="muted" FontSize="11"
+                     VerticalAlignment="Center" />
+          <Image Source="/Assets/nexys-logo.png" Height="14" VerticalAlignment="Center"
+                 RenderOptions.BitmapInterpolationMode="HighQuality" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="18">
+          <TextBlock Text="{Binding ConnectionStatus}" Classes="muted" />
+          <TextBlock Text="{Binding SelectedPoll.StatsText}" Classes="muted" />
+          <TextBlock Text="{Binding GlobalMessage}" Classes="error" />
+        </StackPanel>
+      </DockPanel>
     </Border>
 
     <!-- 트래픽 로그 카드 (접이식) -->
