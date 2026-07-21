@@ -41,6 +41,25 @@
     <SolidColorBrush x:Key="ToggleButtonForegroundChecked" Color="#22211D" />
     <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPointerOver" Color="#22211D" />
     <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPressed" Color="#22211D" />
+
+    <!-- 메뉴 픽토그램 (24x24 벡터) -->
+    <StreamGeometry x:Key="IconLink">M3.9 12C3.9 10.29 5.29 8.9 7 8.9H11V7H7C4.24 7 2 9.24 2 12C2 14.76 4.24 17 7 17H11V15.1H7C5.29 15.1 3.9 13.71 3.9 12ZM8 13H16V11H8V13ZM17 7H13V8.9H17C18.71 8.9 20.1 10.29 20.1 12C20.1 13.71 18.71 15.1 17 15.1H13V17H17C19.76 17 22 14.76 22 12C22 9.24 19.76 7 17 7Z</StreamGeometry>
+    <StreamGeometry x:Key="IconLinkOff">M17 7H13V8.9H17C18.71 8.9 20.1 10.29 20.1 12C20.1 13.41 19.15 14.6 17.86 14.97L19.31 16.42C20.9 15.61 22 13.94 22 12C22 9.24 19.76 7 17 7ZM16 11H13.81L15.81 13H16V11ZM2 4.27L5.11 7.38C3.29 8.12 2 9.91 2 12C2 14.76 4.24 17 7 17H11V15.1H7C5.29 15.1 3.9 13.71 3.9 12C3.9 10.41 5.11 9.1 6.66 8.93L8.73 11H8V13H10.73L13 15.27V17H14.73L18.74 21.01 20 19.74 3.27 3 2 4.27Z</StreamGeometry>
+    <StreamGeometry x:Key="IconEdit">M3 17.25V21H6.75L17.81 9.94 14.06 6.19 3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12 18.88 8.87 20.71 7.04Z</StreamGeometry>
+    <StreamGeometry x:Key="IconTag">M20 10V8H17.19L17.99 4H15.99L15.19 8H11.19L11.99 4H9.99L9.19 8H6V10H8.79L7.99 14H5V16H7.59L6.79 20H8.79L9.59 16H13.59L12.79 20H14.79L15.59 16H19V14H15.99L16.79 10H20ZM14 14H10L10.8 10H14.8L14 14Z</StreamGeometry>
+    <StreamGeometry x:Key="IconAdd">M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z</StreamGeometry>
+    <StreamGeometry x:Key="IconRemove">M19 13H5V11H19V13Z</StreamGeometry>
+    <StreamGeometry x:Key="IconFolder">M10 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6H12L10 4Z</StreamGeometry>
+    <StreamGeometry x:Key="IconSave">M17 3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V7L17 3ZM12 19C10.34 19 9 17.66 9 16C9 14.34 10.34 13 12 13C13.66 13 15 14.34 15 16C15 17.66 13.66 19 12 19ZM15 9H5V5H15V9Z</StreamGeometry>
+    <StreamGeometry x:Key="IconChip">M15 9H9V15H15V9ZM13 13H11V11H13V13ZM21 11V9H19V7C19 5.9 18.1 5 17 5H15V3H13V5H11V3H9V5H7C5.9 5 5 5.9 5 7V9H3V11H5V13H3V15H5V17C5 18.1 5.9 19 7 19H9V21H11V19H13V21H15V19H17C18.1 19 19 18.1 19 17V15H21V13H19V11H21Z</StreamGeometry>
+    <StreamGeometry x:Key="IconHelp">M11 18H13V16H11V18ZM12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM12 6C9.79 6 8 7.79 8 10H10C10 8.9 10.9 8 12 8C13.1 8 14 8.9 14 10C14 12 11 11.75 11 15H13C13 12.75 16 12.5 16 10C16 7.79 14.21 6 12 6Z</StreamGeometry>
+    <StreamGeometry x:Key="IconPlay">M8 5V19L19 12L8 5Z</StreamGeometry>
+    <StreamGeometry x:Key="IconWarning">M1 21H23L12 2 1 21ZM13 18H11V16H13V18ZM13 14H11V10H13V14Z</StreamGeometry>
+    <StreamGeometry x:Key="IconTrash">M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z</StreamGeometry>
+    <StreamGeometry x:Key="IconDownload">M19 9H15V3H9V9H5L12 16L19 9ZM5 18V20H19V18H5Z</StreamGeometry>
+    <StreamGeometry x:Key="IconSend">M2.01 21L23 12 2.01 3 2 10 17 12 2 14 2.01 21Z</StreamGeometry>
+    <StreamGeometry x:Key="IconClose">M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12Z</StreamGeometry>
+    <StreamGeometry x:Key="IconRefresh">M12 6V9L16 5 12 1V4C7.58 4 4 7.58 4 12C4 13.57 4.46 15.03 5.24 16.26L6.7 14.8C6.25 13.97 6 13.02 6 12C6 8.69 8.69 6 12 6ZM18.76 7.74L17.3 9.2C17.74 10.04 18 10.98 18 12C18 15.31 15.31 18 12 18V15L8 19 12 23V20C16.42 20 20 16.42 20 12C20 10.43 19.54 8.97 18.76 7.74Z</StreamGeometry>
   </Application.Resources>
 
   <Application.Styles>
@@ -223,6 +242,24 @@
 
     <Style Selector="RadioButton">
       <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- 버튼 내 픽토그램 -->
+    <Style Selector="Button PathIcon">
+      <Setter Property="Width" Value="15" />
+      <Setter Property="Height" Value="15" />
+      <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+    <Style Selector="Button.accent PathIcon">
+      <Setter Property="Foreground" Value="#FFFFFF" />
+    </Style>
+    <Style Selector="ToggleButton PathIcon">
+      <Setter Property="Width" Value="15" />
+      <Setter Property="Height" Value="15" />
+      <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+    <Style Selector="ToggleButton:checked PathIcon">
+      <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
     </Style>
   </Application.Styles>
 </Application>

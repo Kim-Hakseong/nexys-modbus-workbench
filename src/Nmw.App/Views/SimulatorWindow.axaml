@@ -24,10 +24,20 @@
             <TextBox Text="{Binding DisplayCountText}" Width="70" Watermark="예: 20" IsEnabled="{Binding !IsRunning}" />
           </StackPanel>
           <StackPanel VerticalAlignment="Bottom">
-            <Button Content="시작/정지" Command="{Binding ToggleCommand}" Classes="accent" />
+            <Button Command="{Binding ToggleCommand}" Classes="accent">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <PathIcon Data="{StaticResource IconPlay}" Width="13" Height="13" />
+                <TextBlock Text="시작/정지" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
           </StackPanel>
           <StackPanel VerticalAlignment="Bottom">
-            <ToggleButton Content="값 자동 변화" IsChecked="{Binding AutoChange}" />
+            <ToggleButton IsChecked="{Binding AutoChange}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <PathIcon Data="{StaticResource IconRefresh}" Width="13" Height="13" />
+                <TextBlock Text="값 자동 변화" VerticalAlignment="Center" />
+              </StackPanel>
+            </ToggleButton>
           </StackPanel>
         </StackPanel>
 

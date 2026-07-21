@@ -211,3 +211,12 @@
 - [결정] 다크/라이트 자동 전환(기존 Fluent 기본)을 제거하고 RequestedThemeVariant=Light 고정 — 레퍼런스 팔레트가 라이트 전용이라 다크 모드에서 색 대비가 깨지기 때문. 필요 시 다크 팔레트는 후속 작업.
 - [결정] Fluent 내장 Button.accent 스타일(SystemAccentColor)이 커스텀 잉크 버튼을 덮는 문제 발견(스냅샷 검증에서 확인) → 템플릿 프레젠터 레벨 스타일로 오버라이드.
 - 다음 세션 참고: 남은 개선 후보 동일 (자동 재접속, CSV 내보내기 등).
+
+## S4 — 메뉴 버튼 픽토그램 추가 · 2026-07-21 09:08
+- 상태: ✅ 완료
+- 생성/수정 파일:
+  - src/Nmw.App/App.axaml (StreamGeometry 아이콘 17종 + PathIcon 스타일: 기본 잉크, accent 버튼 내 흰색, 토글 체크 시 잉크)
+  - src/Nmw.App/Views/MainWindow.axaml (툴바 10개 버튼 아이콘+라벨: 연결/해제/쓰기/PLC 주소/폴 추가·삭제/열기/저장/시뮬레이터/도움말, 트래픽 로그 3버튼, 폴 시작/정지. 툴바 WrapPanel 전환 + 창 폭 1280 확대)
+  - src/Nmw.App/Views/ConnectionDialog.axaml, WriteDialog.axaml, SimulatorWindow.axaml, HelpWindow.axaml (취소/연결/닫기/전송/시작·정지/값 자동 변화 버튼 아이콘)
+- 테스트: 234/234 passed (dotnet build 경고 0, 에러 0). 헤드리스 렌더 캡처로 아이콘 표시·툴바 한 줄 배치 확인, 실제 앱 실행 크래시 없음.
+- [결정] 아이콘은 이모지/비트맵 대신 Material 계열 24x24 벡터 지오메트리(StreamGeometry + PathIcon) — 레퍼런스의 모노톤 미니멀 스타일 유지, 배경색에 따라(잉크/흰색) 자동 전환. WrapPanel의 ItemSpacing은 Avalonia 11.1에 없어 자식 Margin 스타일로 간격 처리.

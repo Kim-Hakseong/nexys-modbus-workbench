@@ -35,8 +35,18 @@
       <TextBlock x:Name="ResultText" TextWrapping="Wrap" />
 
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-        <Button Content="닫기" Click="OnCloseClick" />
-        <Button x:Name="SendButton" Content="전송" Click="OnSendClick" Classes="accent" />
+        <Button Click="OnCloseClick">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <PathIcon Data="{StaticResource IconClose}" Width="13" Height="13" />
+            <TextBlock Text="닫기" VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+        <Button x:Name="SendButton" Click="OnSendClick" Classes="accent">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <PathIcon Data="{StaticResource IconSend}" Width="13" Height="13" />
+            <TextBlock Text="전송" VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
       </StackPanel>
 
     </StackPanel>

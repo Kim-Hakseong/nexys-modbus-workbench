@@ -10,7 +10,12 @@
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
         <TextBlock Text="이 창은 툴바의 [도움말] 버튼으로 언제든 다시 열 수 있습니다."
                    Classes="muted" VerticalAlignment="Center" />
-        <Button Content="닫기" Click="OnCloseClick" Classes="accent" />
+        <Button Click="OnCloseClick" Classes="accent">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <PathIcon Data="{StaticResource IconClose}" Width="13" Height="13" />
+            <TextBlock Text="닫기" VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
       </StackPanel>
     </Border>
 
