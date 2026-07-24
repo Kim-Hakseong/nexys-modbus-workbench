@@ -123,12 +123,21 @@ public sealed class SimulatorDataStore
 
     /// <summary>홀딩·입력 레지스터 주소 0..count-1 값을 1씩 증가시킨다 (값 자동 변화용, 래핑).</summary>
     /// <param name="count">증가시킬 주소 개수.</param>
-    public void IncrementRegisters(int count)
+    public void IncrementRegisters(int count) => IncrementRegisters(0, count);
+
+    /// <summary>
+    /// 홀딩·입력 레지스터의 지정 구간(startAddress..startAddress+count-1) 값을 1씩 증가시킨다
+    /// (값 자동 변화용, 래핑, 영역 밖은 무시).
+    /// </summary>
+    /// <param name="startAddress">시작 주소 (0-base).</param>
+    /// <param name="count">증가시킬 주소 개수.</param>
+    public void IncrementRegisters(int startAddress, int count)
     {
         lock (_gate)
         {
-            var n = Math.Clamp(count, 0, AreaSize);
-            for (var i = 0; i < n; i++)
+            var from = Math.Clamp(startAddress, 0, AreaSize);
+            var to = Math.Clamp(startAddress + count, from, AreaSize);
+            for (var i = from; i < to; i++)
             {
                 _holding[i] = unchecked((ushort)(_holding[i] + 1));
                 _input[i] = unchecked((ushort)(_input[i] + 1));

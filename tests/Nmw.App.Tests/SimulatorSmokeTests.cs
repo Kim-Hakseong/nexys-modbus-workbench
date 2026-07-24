@@ -116,6 +116,77 @@ public sealed class SimulatorSmokeTests
     }
 
     [AvaloniaFact]
+    public async Task DisplayRange_ShowsMiddleOfAddressSpace()
+    {
+        var viewModel = new MainWindowViewModel();
+        var window = new MainWindow { DataContext = viewModel };
+        window.Show();
+
+        var simulator = viewModel.Simulator;
+        simulator.PortText = "0";
+        await simulator.ToggleCommand.ExecuteAsync(null);
+        Assert.True(simulator.IsRunning, simulator.Message);
+
+        // 56~72 구간만 표시
+        simulator.DisplayStartText = "56";
+        simulator.DisplayCountText = "17";
+        Assert.Equal(17, simulator.HoldingRows.Count);
+        Assert.Equal(56, simulator.HoldingRows[0].Address);
+        Assert.Equal(72, simulator.HoldingRows[^1].Address);
+        Assert.Equal(56, simulator.CoilRows[0].Address);
+
+        // 구간 내 값 편집 → 저장소 주소 60에 반영, 마스터로도 확인
+        simulator.HoldingRows[4].ValueText = "777"; // 주소 60
+        await viewModel.ApplyConnectionAsync(new ConnectionParameters
+        {
+            Mode = ConnectionMode.Tcp,
+            Host = "127.0.0.1",
+            Port = simulator.ActualPort,
+        });
+        var read = await viewModel.Master!.ReadHoldingRegistersAsync(1, 60, 1);
+        Assert.True(read.IsSuccess, read.Error?.Text);
+        Assert.Equal(777, read.Value[0]);
+
+        // 실행 중 범위 이동 후 되돌아와도 값 유지
+        simulator.DisplayStartText = "0";
+        simulator.DisplayStartText = "56";
+        Assert.Equal("777", simulator.HoldingRows[4].ValueText);
+
+        // 범위 클램프: 시작 990 + 개수 50 → 990~999 (10개)
+        simulator.DisplayStartText = "990";
+        simulator.DisplayCountText = "50";
+        Assert.Equal(10, simulator.HoldingRows.Count);
+        Assert.Equal(999, simulator.HoldingRows[^1].Address);
+
+        await viewModel.DisconnectCommand.ExecuteAsync(null);
+        await simulator.StopAsync();
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void DisplayRange_InvalidInput_KeepsLastValidRange()
+    {
+        var viewModel = new MainWindowViewModel();
+        var window = new MainWindow { DataContext = viewModel };
+        window.Show();
+
+        var simulator = viewModel.Simulator;
+        simulator.DisplayStartText = "56";
+        simulator.DisplayCountText = "5";
+        Assert.Equal(56, simulator.HoldingRows[0].Address);
+
+        // 입력 중 미완성/잘못된 값은 무시하고 마지막 유효 범위 유지
+        simulator.DisplayStartText = "";
+        Assert.Equal(56, simulator.HoldingRows[0].Address);
+        simulator.DisplayStartText = "abc";
+        Assert.Equal(56, simulator.HoldingRows[0].Address);
+        simulator.DisplayStartText = "99999";
+        Assert.Equal(56, simulator.HoldingRows[0].Address);
+
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public async Task RtuMode_WithoutPortName_ShowsMessage()
     {
         var viewModel = new MainWindowViewModel();

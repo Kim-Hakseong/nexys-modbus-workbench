@@ -240,3 +240,14 @@
   - 카드/소프트 서피스/라인/호버: 핑크 기 제거, 그레이지 계열로 통일. 잉크는 홈페이지 다크 #16171A
   - 와인 레드(#7A1020)는 포인트 전용 유지: 체크 토글, pressed, 호버 보더, 라디오/체크박스. 오류 색상은 --red-bright(#9C2030)로 브랜드 정합
 - 테스트: 234/234 passed (경고 0). 렌더 캡처로 뉴트럴 배경 + 와인 포인트(켜진 토글) 확인, 실행 크래시 없음.
+
+## S7 — 시뮬레이터 표시 시작 주소 (구간 보기) · 2026-07-24 09:29
+- 상태: ✅ 완료
+- 생성/수정 파일:
+  - src/Nmw.Core/Simulator/SimulatorDataStore.cs (IncrementRegisters(start, count) 구간 오버로드 — 자동 변화가 표시 구간에 적용되도록)
+  - src/Nmw.App/ViewModels/SimulatorViewModel.cs (DisplayStartText 추가, ApplyDisplayRange — 텍스트 변경 즉시 행 재구성, 실행 중에도 반영. 범위 클램프: 시작+개수 > 영역이면 개수 자동 축소. 미완성/잘못된 입력은 마지막 유효 범위 유지)
+  - src/Nmw.App/Views/SimulatorWindow.axaml ("표시 시작" 필드 추가, 표시 시작/개수는 실행 중에도 편집 가능, 안내 문구·툴팁)
+  - src/Nmw.App/Views/HelpWindow.axaml (3장에 구간 보기 요령 — 폴 그리드는 시작 주소+개수, 시뮬레이터는 표시 시작/개수)
+  - tests/Nmw.App.Tests/SimulatorSmokeTests.cs (2케이스 추가: 56~72 구간 표시·편집·마스터 검증·범위 이동 후 값 유지·클램프 / 잘못된 입력 무시)
+- 테스트: 236/236 passed (경고 0), 실행 크래시 없음.
+- [결정] 표시 범위 변경은 별도 적용 버튼 없이 입력 즉시 반영(입력 중 미완성 값은 무시하고 마지막 유효 범위 유지). 값 자동 변화도 표시 구간(시작~시작+개수)에 적용해 화면에서 항상 변화가 보이도록 함.

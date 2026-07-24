@@ -45,6 +45,7 @@
           <TextBlock TextWrapping="Wrap" Text="폴링은 주기적으로 반복하는 '읽기' 작업이라 읽기 FC만 선택합니다:" />
           <TextBlock TextWrapping="Wrap" Text="• FC01 코일 / FC02 접점 (ON·OFF 값) · FC03 홀딩 / FC04 입력 레지스터 (숫자 값)" />
           <TextBlock TextWrapping="Wrap" Text="• 주기(ms)는 최소 10ms. [폴 추가]로 탭을 늘려 여러 폴을 동시에 돌릴 수 있습니다" />
+          <TextBlock TextWrapping="Wrap" Text="• 특정 구간만 보고 싶으면 시작 주소와 개수를 그 구간으로 설정하세요 (예: 56~72 → 시작 56, 개수 17). 시뮬레이터 그리드도 '표시 시작/개수'로 동일하게 구간 지정이 됩니다" />
           <TextBlock TextWrapping="Wrap" Text="• 상태 표시: Tx(요청 수) | OK(정상 응답) | Err(오류 수) | 응답시간(ms)" />
 
           <TextBlock FontSize="15" FontWeight="Bold" Margin="0,10,0,0" Text="4. 쓰기 — FC05/06/15/16은 여기 있습니다" />

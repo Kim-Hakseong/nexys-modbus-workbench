@@ -121,6 +121,7 @@ public sealed partial class SimulatorViewModel : ObservableObject, IAsyncDisposa
     private ModbusTcpSimulator? _tcpSimulator;
     private ModbusRtuSlaveSimulator? _rtuSimulator;
     private DispatcherTimer? _timer;
+    private int _displayStart;
     private int _displayCount = 20;
 
     private static readonly int[] BaudByIndex = [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200];
@@ -144,6 +145,9 @@ public sealed partial class SimulatorViewModel : ObservableObject, IAsyncDisposa
 
     [ObservableProperty]
     private int stopBitsIndex; // One
+
+    [ObservableProperty]
+    private string displayStartText = "0";
 
     [ObservableProperty]
     private string displayCountText = "20";
@@ -197,6 +201,12 @@ public sealed partial class SimulatorViewModel : ObservableObject, IAsyncDisposa
     /// <summary>실행 중인 TCP 시뮬레이터의 실제 포트 (테스트/표시용).</summary>
     public int ActualPort => _tcpSimulator?.Port ?? 0;
 
+    /// <summary>기본 표시 범위(0~19)로 그리드 행을 미리 구성한다.</summary>
+    public SimulatorViewModel()
+    {
+        ApplyDisplayRange();
+    }
+
     /// <summary>시뮬레이터를 시작/정지한다.</summary>
     [RelayCommand]
     public async Task ToggleAsync()
@@ -204,12 +214,6 @@ public sealed partial class SimulatorViewModel : ObservableObject, IAsyncDisposa
         if (IsRunning)
         {
             await StopAsync();
-            return;
-        }
-
-        if (!int.TryParse(DisplayCountText, out var displayCount) || displayCount < 1)
-        {
-            Message = $"{Strings.InvalidInput}: 표시 개수";
             return;
         }
 
@@ -265,8 +269,7 @@ public sealed partial class SimulatorViewModel : ObservableObject, IAsyncDisposa
             _rtuSimulator = simulator;
         }
 
-        _displayCount = Math.Min(displayCount, _store.AreaSize);
-        BuildRows();
+        ApplyDisplayRange();
         Message = "";
         IsRunning = true;
         UpdateStatus();
@@ -314,9 +317,16 @@ public sealed partial class SimulatorViewModel : ObservableObject, IAsyncDisposa
 
         if (AutoChange)
         {
-            _store.IncrementRegisters(_displayCount);
+            _store.IncrementRegisters(_displayStart, _displayCount);
         }
 
+        RefreshValues();
+        UpdateStatus();
+    }
+
+    /// <summary>그리드 행 표시 값을 저장소 현재 값으로 갱신한다 (실행 여부 무관).</summary>
+    public void RefreshValues()
+    {
         foreach (var row in HoldingRows)
         {
             row.UpdateFromSimulator(_store.GetHoldingRegister(row.Address));
@@ -336,9 +346,30 @@ public sealed partial class SimulatorViewModel : ObservableObject, IAsyncDisposa
         {
             row.UpdateFromSimulator(_store.GetDiscreteInput(row.Address));
         }
-
-        UpdateStatus();
     }
+
+    /// <summary>
+    /// 표시 시작 주소/개수 입력을 파싱해 그리드 행을 다시 만든다.
+    /// 실행 중에도 즉시 반영되며, 값은 저장소에 있으므로 범위를 옮겨도 유지된다.
+    /// </summary>
+    public void ApplyDisplayRange()
+    {
+        if (!int.TryParse(DisplayStartText, out var start) ||
+            start < 0 || start >= _store.AreaSize ||
+            !int.TryParse(DisplayCountText, out var count) || count < 1)
+        {
+            return; // 입력 중 미완성 값은 무시 (마지막 유효 범위 유지)
+        }
+
+        _displayStart = start;
+        _displayCount = Math.Min(count, _store.AreaSize - start);
+        BuildRows();
+        RefreshValues();
+    }
+
+    partial void OnDisplayStartTextChanged(string value) => ApplyDisplayRange();
+
+    partial void OnDisplayCountTextChanged(string value) => ApplyDisplayRange();
 
     partial void OnModeIndexChanged(int value)
     {
@@ -355,14 +386,15 @@ public sealed partial class SimulatorViewModel : ObservableObject, IAsyncDisposa
         DiscreteRows.Clear();
         for (var i = 0; i < _displayCount; i++)
         {
+            var address = _displayStart + i;
             HoldingRows.Add(new SimRegisterRowViewModel(
-                i, (address, value) => _store.SetHoldingRegister(address, value)));
+                address, (a, value) => _store.SetHoldingRegister(a, value)));
             InputRows.Add(new SimRegisterRowViewModel(
-                i, (address, value) => _store.SetInputRegister(address, value)));
+                address, (a, value) => _store.SetInputRegister(a, value)));
             CoilRows.Add(new SimBitRowViewModel(
-                i, (address, value) => _store.SetCoil(address, value)));
+                address, (a, value) => _store.SetCoil(a, value)));
             DiscreteRows.Add(new SimBitRowViewModel(
-                i, (address, value) => _store.SetDiscreteInput(address, value)));
+                address, (a, value) => _store.SetDiscreteInput(a, value)));
         }
     }
 
